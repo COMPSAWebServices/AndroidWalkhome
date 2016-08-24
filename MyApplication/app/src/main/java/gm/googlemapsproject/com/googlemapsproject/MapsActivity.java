@@ -1,14 +1,22 @@
 package gm.googlemapsproject.com.googlemapsproject;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -41,7 +49,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Circle circle;
     private GoogleApiClient mGoogleApiClient;//for google places
+    private LocationManager locationManager; //to get the user's current location from gps
+    private String provider;
 
+    private double currentLat;
+    private double currentLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +63,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;;//toast length
+        boolean enabled; //to check if gps is enabled or not
 
         //initialize the googleapi client for autocomplete
         //**Actually not sure what this does. GOing to have to read more about it
@@ -63,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
 
 
-        /*Auto search complete. Though its not working right now****/
+        //auto complete fragment
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
@@ -82,8 +99,89 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
         });
+
+        //get location manager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        provider = locationManager.getBestProvider(criteria, false);
+        try{
+
+
+
+
+
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null){
+                getCurrentLocation(location);
+            }else{//if location not found
+                /*
+                setDefaultLocation();
+                Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
+                */
+
+
+                enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+                //checks if gps is not enabled
+                if (!enabled){
+                    /*new AlertDialog.Builder(MapsActivity.this); ==> so its not applicationContext, it needs to be <currentactivity>.this*/
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(MapsActivity.this);
+                    builder1.setMessage("Please turn on your GPS!");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    /* take them to enable their gps
+                                    * Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(intent);*/
+                                }
+                            });
+
+                    /*Maybe take this out*/
+                    builder1.setNegativeButton(
+                            "No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                }else{
+                    //gps is on
+                }
+            }
+        } catch (SecurityException e){
+
+            //dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
+            Toast toast = Toast.makeText(context, "Please turn on your GPS!", duration);
+            toast.show();
+        }//end catch
+
+
+
     }//end oncreate
 
+    /*gets the current location from the user and stores it into currentLat and currentLong*/
+    public void getCurrentLocation(Location location){
+        currentLat = location.getLatitude();
+        currentLong = location.getLongitude();
+    }//end getCurrentLocation();
+
+    //if gps is not set, sets the location somewhere
+    public void setDefaultLocation(){
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;;//toast length
+        Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
+        //LatLng queens = new LatLng(44.053607, -79.458481);
+        currentLat = 44.053607;
+        currentLong = -79.458481;
+
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -98,7 +196,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Location currently set in Newmarket, ON
-        LatLng queens = new LatLng(44.053607, -79.458481);
+        //LatLng queens = new LatLng(44.053607, -79.458481);
+        LatLng queens = new LatLng(currentLat, currentLong);
         //adds the market description
         mMap.addMarker(new MarkerOptions().position(queens).title("Marker at Queen's"));
 
@@ -114,6 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         //when clicked move camera to user's current location
         mMap.setMyLocationEnabled(true);
+
         //adds the specify location and zoom in by 17
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(queens, 17));
 
