@@ -3,17 +3,20 @@ package gm.googlemapsproject.com.googlemapsproject;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -27,12 +30,17 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+/*Google maps places api import*/
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnConnectionFailedListener {
 
     private static final String TAG = "";
     private int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private GoogleMap mMap;
     private Circle circle;
+    private GoogleApiClient mGoogleApiClient;//for google places
 
 
     @Override
@@ -44,6 +52,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //initialize the googleapi client for autocomplete
+        //**Actually not sure what this does. GOing to have to read more about it
+        //https://developers.google.com/places/android-api/start
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
 
 
         /*Auto search complete. Though its not working right now****/
@@ -65,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
         });
-    }
+    }//end oncreate
 
     /**
      * Manipulates the map once available.
@@ -100,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //adds the specify location and zoom in by 17
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(queens, 17));
 
-        //adds a circle radius around the location
+        //adds a circle radius around the specifiy location
         circle = mMap.addCircle(new CircleOptions()
                 .center(queens)
                 .radius(1000)
@@ -109,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .fillColor(0x5500ff00)
                 .clickable(true));
 
-    }
+    }//end on mapready
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -127,4 +144,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        //TODO: implement GoogleApiClient.OnConnectionFailedListener
+        //to handle connection failures
+    }
+
+
 }
