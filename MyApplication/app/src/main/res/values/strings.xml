@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GoogleMapsProject</string>
     <string name="title_activity_maps">Map</string>
+    <string name="google_server_key">AIzaSyA5w5A7o_V_gyeNwsTg_pjjN1e7eF_la4s</string>
 </resources>

@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -17,6 +18,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -27,4 +31,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.4.0'
     //testing
     compile 'com.google.android.gms:play-services-location:8.4.0'
+    //destination library
+    compile 'com.akexorcist:googledirectionlibrary:1.0.4'
 }

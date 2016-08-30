@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,9 +16,19 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -41,6 +52,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /*Google maps places api import*/
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OnConnectionFailedListener {
 
@@ -55,6 +69,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double currentLat;
     private double currentLong;
 
+    private TextView walkhomeTitle;
+    private TextView location;
+    private Button testing;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +87,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;;//toast length
         boolean enabled; //to check if gps is enabled or not
+        //walkhomeTitle = (TextView) findViewById(R.id.walkhomeTitle);
+        location =  (TextView)findViewById(R.id.location);
+        //testing = (Button)findViewById(R.id.testingButton);
 
         //initialize the googleapi client for autocomplete
         //**Actually not sure what this does. GOing to have to read more about it
@@ -84,41 +106,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setHint("Search a Location");
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName());
-            }
 
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
 
-        });
 
-        //get location manager
+        //gets location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         try{
-
-
-
-
-
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null){
                 getCurrentLocation(location);
             }else{//if location not found
+                //set location to queens campus
+                setDefaultLocation();
                 /*
                 setDefaultLocation();
                 Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
                 */
-
 
                 enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
@@ -162,9 +167,84 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
         }//end catch
 
+        //autocomplete search. When the user enters the address -> gets the directions with https://github.com/akexorcist/Android-GoogleDirectionLibrary
+        //autocompleteFragment.setHint("Search a Location");
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName());
+                location.setText(place.getName()); //***take this out later, just for testing
+                //gets the nagivation
+                //testing
 
+                //requires server key instead of the api key
+                GoogleDirection.withServerKey("AIzaSyA5w5A7o_V_gyeNwsTg_pjjN1e7eF_la4s")
+                        .from(new LatLng(currentLat, currentLong))
+                        .to(new LatLng(44.040223, -79.485682))
+                        .avoid(AvoidType.FERRIES)
+                        .avoid(AvoidType.HIGHWAYS)
+                        .transportMode(TransportMode.WALKING)
+                        .execute(new DirectionCallback() {
+                            /*
+                            @Override
+                            public void onDirectionSuccess(Path.Direction direction, String rawBody) {
+                                if(direction.isOK()) {
+                                    // Do something
+                                } else {
+                                    // Do something
+                                }
+                            }*/
+
+                            @Override
+                            public void onDirectionSuccess(Direction direction, String rawBody) {
+                                String status = direction.getStatus();
+                                //add the other market
+                                LatLng test = new LatLng(44.040223, -79.485682);
+                                mMap.addMarker(new MarkerOptions().position(test).title("Marker at Queen's"));
+
+                                location.setText(direction.getStatus());
+                                if(status.equals(RequestResult.OK)) {
+                                    // Do something
+                                    location.setText("From current Location");
+                                    //Direction from origin to destination location
+                                    Route route = direction.getRouteList().get(0);
+                                    //Leg: the direction way from one location to another location
+                                    Leg leg = route.getLegList().get(0);
+
+                                    //To draw a direction route on google maps, it must be a PolylineOptions
+                                    //So we have to convert the route into Poly. by retrieving leg instance
+                                    //from route instance, then converting it by using DirectionCoverter class.
+                                    ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+                                    PolylineOptions polylineOptions = DirectionConverter.createPolyline(MapsActivity.this, directionPositionList, 5, Color.RED);
+                                    mMap.addPolyline(polylineOptions);
+
+                                } else if(status.equals(RequestResult.NOT_FOUND)) {
+                                    // Do something
+                                    location.setText("Shit doesnt work!");
+                                }
+                            }
+
+                            @Override
+                            public void onDirectionFailure(Throwable t) {
+                                // Do something
+                                location.setText("Not enable!");
+                            }
+
+                        });
+
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+
+        });
 
     }//end oncreate
+
 
     /*gets the current location from the user and stores it into currentLat and currentLong*/
     public void getCurrentLocation(Location location){
