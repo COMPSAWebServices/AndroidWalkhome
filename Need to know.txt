@@ -1,0 +1,2 @@
+If your google maps isn't working/grey
+Need to download/replace debug.keystore && default.keyset into C:\Users\User\.android

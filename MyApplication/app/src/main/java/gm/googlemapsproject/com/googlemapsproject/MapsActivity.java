@@ -102,6 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .enableAutoManage(this, this)
                 .build();
 
+        //fucking run you piece of shit
+        int a = 0;
 
         //auto complete fragment
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)

@@ -12,10 +12,5 @@
     tools:context="gm.googlemapsproject.com.googlemapsproject.NavigationActivity"
     tools:showIn="@layout/app_bar_navigation">
 
-    <include layout="@layout/activity_maps"
-        android:layout_marginBottom="185dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

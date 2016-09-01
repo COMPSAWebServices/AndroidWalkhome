@@ -17,6 +17,7 @@
 
     *** NEED to change the API after
     -->
+
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
        AIzaSyBHNBMezXFO4sGibuxO5kUX3kd5QhV4WQw
     </string>
