@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -329,6 +330,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         //TODO: implement GoogleApiClient.OnConnectionFailedListener
         //to handle connection failures
+    }
+
+    /** Called when the user clicks the Send button */
+    public void nextAct(View view) {
+        Intent intent = new Intent(MapsActivity.this, NavigationActivity.class);
+        startActivity(intent);
     }
 
 

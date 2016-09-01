@@ -28,7 +28,15 @@
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location"/>
+            android:text="Location"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing Button"
+            android:onClick="nextAct">
+
+        </Button>
 
     </LinearLayout>
 
