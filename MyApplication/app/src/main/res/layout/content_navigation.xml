@@ -12,5 +12,12 @@
     tools:context="gm.googlemapsproject.com.googlemapsproject.NavigationActivity"
     tools:showIn="@layout/app_bar_navigation">
 
+    <fragment
+        android:id="@+id/content_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </RelativeLayout>
+
