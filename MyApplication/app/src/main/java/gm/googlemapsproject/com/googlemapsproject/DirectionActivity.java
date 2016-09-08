@@ -66,15 +66,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
     private String destination;
 
     private int duration = Toast.LENGTH_SHORT;;//toast length
-    private LocationManager locationManager; //to get the user's current location from gps
-    private String provider;
-    private Boolean enabled;
     private Boolean flag = false;
-
-   // private static DecimalFormat df2 = new DecimalFormat("##.###");
-
-    private TextView testing;
-
 
 
     @Override
@@ -103,12 +95,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        //sets latFrom and longFrom to default currentLat and currentLong
-//        latFrom = currentLat;
-//        longFrom = currentLong;
-
         //initialize the googleapi client for autocomplete
-        //**Actually not sure what this does. GOing to have to read more about it
         //https://developers.google.com/places/android-api/start
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
@@ -138,12 +125,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 //                longFrom = latlngFrom.longitude;
                 currentLat = latlngFrom.latitude;
                 currentLong = latlngFrom.longitude;
-
-                testing = (TextView)findViewById(R.id.testingLatLng);
-                //testing.setText("Lat: " + latFrom + "                    Long: " +longFrom + "  currentLat: "+ currentLat + "  currentLong: " + currentLong );
-                //ToDo
-                //need to check if the user changes the current location
-
             }
 
             @Override
@@ -167,8 +148,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 latlngTo = place.getLatLng();
                 latTo = latlngTo.latitude;
                 longTo = latlngTo.longitude;
-
-
             }
 
             @Override
@@ -177,9 +156,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-
-
-
+        //request button
         requestButton = (Button)findViewById(R.id.request_button);
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,21 +173,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     flag = false;
                 }
 
-                //checks to see if currentlocation and currentfrom are the same
-//                if(((double)(Math.round(latFrom * 1000)/1000))!=((double)(Math.round(currentLat * 1000)/1000))){
-//                    currentLat = latFrom;
-//                    currentLong = longFrom;
-//                }
-
-
-                //else alerts/reminds them
-
-
-                //checks that the currentLocation with GPS is the same as from the geocode
-                //***Need to reduce the decimal places to just XX.XXX
-                //if they are the same just use the current location
-                //if latFrom and longFrom are empty, send current location
-
                 //transfer Intent to NavigationAcitivty if it satisfies all the requirements
                 if(flag==true){
                     //String message = "Testing";
@@ -223,7 +185,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }
-
             }
         });
     }//end onCreate

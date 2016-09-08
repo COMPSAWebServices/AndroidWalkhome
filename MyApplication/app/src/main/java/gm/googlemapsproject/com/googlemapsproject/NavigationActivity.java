@@ -67,8 +67,6 @@ public class NavigationActivity extends AppCompatActivity
     private boolean enabled;
     private static final String TAG = "";
 
-    private LatLng latlngFrom;
-    private LatLng latlngTo;
     private double latFrom;
     private double longFrom;
     private double latTo;
@@ -85,6 +83,7 @@ public class NavigationActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         try{
+            //gets the intent from DirectionActivity
             Intent directionActivityIntent = this.getIntent();
             Bundle bundle = directionActivityIntent.getExtras();
             //String intentMessage = intent.getStringExtra("currentLocation");
@@ -128,7 +127,6 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //googlemaps
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.content_map);
@@ -211,11 +209,6 @@ public class NavigationActivity extends AppCompatActivity
             }else{//if location not found
                 //set location to queens campus
                 setDefaultLocation();
-                /*
-                setDefaultLocation();
-                Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
-                */
-
                 enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
                 //checks if gps is not enabled
@@ -364,6 +357,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         else if (id == R.id.request_walk) {
+            setCurrentLocation();
             Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
