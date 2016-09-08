@@ -52,13 +52,11 @@ import java.util.ArrayList;
 public class DirectionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;//for google places
-    private double currentLat;
-    private double currentLong;
+    private double currentLat = 0;
+    private double currentLong = 0;
 
     private LatLng latlngFrom;
     private LatLng latlngTo;
-    private double latFrom;
-    private double longFrom;
     private double latTo;
     private double longTo;
 
@@ -89,8 +87,12 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         //displays the
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //ActionBar actionBar = getActionBar();
-        //actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Intent navigationActivityIntent = this.getIntent();
+        Bundle bundleCurrentLocation = navigationActivityIntent.getExtras();
+
+        currentLat     = bundleCurrentLocation.getDouble("currentLat");
+        currentLong    = bundleCurrentLocation.getDouble("currentLong");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +103,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        setCurrentLocation();
         //sets latFrom and longFrom to default currentLat and currentLong
 //        latFrom = currentLat;
 //        longFrom = currentLong;
@@ -139,7 +140,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 currentLong = latlngFrom.longitude;
 
                 testing = (TextView)findViewById(R.id.testingLatLng);
-                testing.setText("Lat: " + latFrom + "                    Long: " +longFrom + "  currentLat: "+ currentLat + "  currentLong: " + currentLong );
+                //testing.setText("Lat: " + latFrom + "                    Long: " +longFrom + "  currentLat: "+ currentLat + "  currentLong: " + currentLong );
                 //ToDo
                 //need to check if the user changes the current location
 
@@ -227,84 +228,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }//end onCreate
 
-    public void setCurrentLocation(){
-        //gets location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        provider = locationManager.getBestProvider(criteria, false);
-        Context context = getApplicationContext();
-        try{
-            Location location = locationManager.getLastKnownLocation(provider);
-
-            if (location != null){
-                getCurrentLocation(location);
-            }else{//if location not found
-                //set location to queens campus
-                setDefaultLocation();
-                /*
-                setDefaultLocation();
-                Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
-                */
-
-                enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-                //checks if gps is not enabled
-                if (!enabled){
-                    /*new AlertDialog.Builder(MapsActivity.this); ==> so its not applicationContext, it needs to be <currentactivity>.this*/
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-                    builder1.setMessage("Please turn on your GPS!");
-                    builder1.setCancelable(true);
-
-                    builder1.setPositiveButton(
-                            "Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                    /* take them to enable their gps
-                                    * Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    startActivity(intent);*/
-                                }
-                            });
-
-                    /*Maybe take this out*/
-                    builder1.setNegativeButton(
-                            "No",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
-                }else{
-                    //gps is on
-                }
-            }
-        } catch (SecurityException e){
-
-            //dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
-            Toast toast = Toast.makeText(context, "Please turn on your GPS!", duration);
-            toast.show();
-        }//end catch
-    }//end setCurrentLocation
-
-    /*gets the current location from the user and stores it into currentLat and currentLong*/
-    public void getCurrentLocation(Location location){
-        currentLat = location.getLatitude();
-        currentLong = location.getLongitude();
-    }//end getCurrentLocation;
-
-    //if gps is not set, sets the location somewhere
-    public void setDefaultLocation() {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        ;//toast length
-        Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
-        //LatLng queens = new LatLng(44.053607, -79.458481);
-        currentLat = 44.053607;
-        currentLong = -79.458481;
-    }//end setDefaultLocation
 
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();

@@ -84,16 +84,24 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = this.getIntent();
-        Bundle bundle = intent.getExtras();
-        //String intentMessage = intent.getStringExtra("currentLocation");
-        latFrom   = bundle.getDouble("latFrom");
-        longFrom  = bundle.getDouble("longFrom");
-        latTo     = bundle.getDouble("latTo");
-        longTo    = bundle.getDouble("longTo");
+        try{
+            Intent directionActivityIntent = this.getIntent();
+            Bundle bundle = directionActivityIntent.getExtras();
+            //String intentMessage = intent.getStringExtra("currentLocation");
+            latFrom   = bundle.getDouble("latFrom");
+            longFrom  = bundle.getDouble("longFrom");
+            latTo     = bundle.getDouble("latTo");
+            longTo    = bundle.getDouble("longTo");
 
-        currentLat = latFrom;
-        currentLong = longFrom;
+            currentLat = latFrom;
+            currentLong = longFrom;
+
+        }catch(Exception e){
+            //sets current location when the application just started
+            if((currentLat == 0) && (currentLong == 0)){
+                setCurrentLocation();
+            }
+        }
 
 
         Context context = getApplicationContext();
@@ -126,10 +134,7 @@ public class NavigationActivity extends AppCompatActivity
                     .findFragmentById(R.id.content_map);
         mapFragment.getMapAsync(this);
 
-        //sets current location when the application just started
-        if((currentLat == 0) && (currentLong == 0)){
-            setCurrentLocation();
-        }
+
 
         //calls setDirection if we know that the user has already entered their destination
         if((currentLat!=0) && (latTo!=0)){
@@ -357,10 +362,16 @@ public class NavigationActivity extends AppCompatActivity
         else if (id == R.id.about_campus_security) {
 
         }
-        /*
-        else if (id == R.id.nav_slideshow) {
 
+        else if (id == R.id.request_walk) {
+            Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+            Bundle setBundle = new Bundle();
+            setBundle.putDouble("currentLat", currentLat);
+            setBundle.putDouble("currentLong", currentLong);
+            currentLocationIntent.putExtras(setBundle);
+            startActivity(currentLocationIntent);
         }
+         /*
         else if (id == R.id.nav_manage) {
 
         } */

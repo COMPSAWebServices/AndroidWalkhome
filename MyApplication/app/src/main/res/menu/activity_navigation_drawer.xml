@@ -31,7 +31,9 @@
 
     <item android:title="Request Walk">
         <menu>
-            <item android:title="Request Now">
+            <item
+                android:id="@+id/request_walk"
+                android:title="Request Now">
             </item>
         </menu>
     </item>
