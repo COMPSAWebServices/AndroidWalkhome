@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -85,6 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
+
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;;//toast length
         boolean enabled; //to check if gps is enabled or not
@@ -102,14 +104,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .enableAutoManage(this, this)
                 .build();
 
-        //fucking run you piece of shit
-        int a = 0;
-
         //auto complete fragment
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-
+        //change the background color
+        autocompleteFragment.getView().setBackgroundColor(Color.BLUE);
 
 
         //gets location manager

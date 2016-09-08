@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +25,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -34,17 +50,29 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private GoogleApiClient mGoogleApiClient;//for google places
     private Circle circle;
-    private double currentLat;
-    private double currentLong;
+    private double currentLat = 0;
+    private double currentLong = 0;
     private LocationManager locationManager; //to get the user's current location from gps
     private String provider;
     private boolean enabled;
+    private static final String TAG = "";
+
+    private LatLng latlngFrom;
+    private LatLng latlngTo;
+    private double latFrom;
+    private double longFrom;
+    private double latTo;
+    private double longTo;
 
 
     private int duration = Toast.LENGTH_SHORT;;//toast length
@@ -56,9 +84,22 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
-        //Context context = getApplicationContext();
-        //int duration = Toast.LENGTH_SHORT;;//toast length
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        //String intentMessage = intent.getStringExtra("currentLocation");
+        latFrom   = bundle.getDouble("latFrom");
+        longFrom  = bundle.getDouble("longFrom");
+        latTo     = bundle.getDouble("latTo");
+        longTo    = bundle.getDouble("longTo");
+
+        currentLat = latFrom;
+        currentLong = longFrom;
+
+
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;;//toast length
+        Toast toast = Toast.makeText(context, Double.toString(latFrom), duration);
+        toast.show();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,12 +126,71 @@ public class NavigationActivity extends AppCompatActivity
                     .findFragmentById(R.id.content_map);
         mapFragment.getMapAsync(this);
 
-        //gets the current location of the user
-        setCurrentLocation();
+        //sets current location when the application just started
+        if((currentLat == 0) && (currentLong == 0)){
+            setCurrentLocation();
+        }
 
+        //calls setDirection if we know that the user has already entered their destination
+        if((currentLat!=0) && (latTo!=0)){
+            setDirections();
+        }
+
+
+    }//end onCreate
+
+    /**Get the directions**/
+    public void setDirections(){
+        //requires server key instead of the api key
+        GoogleDirection.withServerKey("AIzaSyA5w5A7o_V_gyeNwsTg_pjjN1e7eF_la4s")
+                .from(new LatLng(currentLat, currentLong))
+                .to(new LatLng(latTo, longTo))
+                .avoid(AvoidType.FERRIES)
+                .avoid(AvoidType.HIGHWAYS)
+                .transportMode(TransportMode.WALKING)
+                .execute(new DirectionCallback() {
+                            /*
+                            @Override
+                            public void onDirectionSuccess(Path.Direction direction, String rawBody) {
+                                if(direction.isOK()) {
+                                    // Do something
+                                } else {
+                                    // Do something
+                                }
+                            }*/
+
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                        String status = direction.getStatus();
+                        //add the other market
+                        LatLng test = new LatLng(latTo, longTo);
+                        mMap.addMarker(new MarkerOptions().position(test).title("Destination"));
+                        if(status.equals(RequestResult.OK)) {
+                            // Do something
+                            //Direction from origin to destination location
+                            Route route = direction.getRouteList().get(0);
+                            //Leg: the direction way from one location to another location
+                            Leg leg = route.getLegList().get(0);
+
+                            //To draw a direction route on google maps, it must be a PolylineOptions
+                            //So we have to convert the route into Poly. by retrieving leg instance
+                            //from route instance, then converting it by using DirectionCoverter class.
+                            ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+                            PolylineOptions polylineOptions = DirectionConverter.createPolyline(NavigationActivity.this, directionPositionList, 5, Color.RED);
+                            mMap.addPolyline(polylineOptions);
+
+                        } else if(status.equals(RequestResult.NOT_FOUND)) {
+                            // Do something
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        // Do something
+                    }
+
+                });
     }
-
-
 
     /***********************************************CURRENT LOCATION**************************************************************/
     public void setCurrentLocation(){
@@ -251,17 +351,23 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.about_walkhome) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        }
+        else if (id == R.id.about_campus_security) {
 
-        } else if (id == R.id.nav_slideshow) {
+        }
+        /*
+        else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        }
+        else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } */
+        else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        }
+        else if (id == R.id.nav_send) {
 
         }
 
