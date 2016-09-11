@@ -82,6 +82,9 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;;//toast length
+
         try{
             //gets the intent from DirectionActivity
             Intent directionActivityIntent = this.getIntent();
@@ -96,18 +99,20 @@ public class NavigationActivity extends AppCompatActivity
             currentLong = longFrom;
 
         }catch(Exception e){
-            //sets current location when the application just started
+            //if the application just started and can't the bundle from DirectionActivity.
             if((currentLat == 0) && (currentLong == 0)){
+                Toast toast = Toast.makeText(context, "setting current location", duration);
+                //toast.show();
                 setCurrentLocation();
             }
         }
 
 
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;;//toast length
-        Toast toast = Toast.makeText(context, Double.toString(latFrom), duration);
-        toast.show();
 
+        Toast toast = Toast.makeText(context, Double.toString(latFrom), duration);
+        //toast.show();
+
+        //floating button -> ***Change this later
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,6 +201,7 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     /***********************************************CURRENT LOCATION**************************************************************/
+    /*Current location from GPS_PROVIDER gets the last known location, might not be accurate so we're going to have to change this.*/
     public void setCurrentLocation(){
         //gets location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -263,7 +269,8 @@ public class NavigationActivity extends AppCompatActivity
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
         ;//toast length
-        Toast toast = Toast.makeText(context, "GPS not enabled!", duration);
+        Toast toast = Toast.makeText(context, "Setting default Location!", duration);
+        toast.show();
         //LatLng queens = new LatLng(44.053607, -79.458481);
         currentLat = 44.053607;
         currentLong = -79.458481;

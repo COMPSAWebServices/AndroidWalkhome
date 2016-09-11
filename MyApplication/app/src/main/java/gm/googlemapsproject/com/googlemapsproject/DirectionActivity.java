@@ -76,7 +76,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //displays the
+        //displays the back  button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
