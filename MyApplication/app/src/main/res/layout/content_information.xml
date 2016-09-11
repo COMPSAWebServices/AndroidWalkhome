@@ -40,10 +40,9 @@
         android:layout_height="wrap_content"
         android:text="Feedback Form"
         android:background="#ebdc08"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/call_campussecurity_button"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="63dp" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/call_walkhome_button"
@@ -51,9 +50,10 @@
         android:layout_height="wrap_content"
         android:text="Call Walkhome"
         android:textColor="#000000"
-        android:layout_below="@+id/feedback_button"
+        android:layout_below="@+id/walkhome_info"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginTop="72dp"
         android:layout_toLeftOf="@+id/call_campussecurity_button"
         android:layout_toStartOf="@+id/call_campussecurity_button" />
 
