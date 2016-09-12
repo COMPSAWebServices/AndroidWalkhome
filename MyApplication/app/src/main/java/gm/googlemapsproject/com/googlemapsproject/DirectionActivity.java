@@ -80,6 +80,8 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
+
         Intent navigationActivityIntent = this.getIntent();
         Bundle bundleCurrentLocation = navigationActivityIntent.getExtras();
 
@@ -114,7 +116,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         autocompleteFragmentFrom.setBoundsBias(new LatLngBounds(new LatLng(currentLat, currentLong), new LatLng(currentLat, currentLong) ));
 
         //change the background color
-        autocompleteFragmentFrom.getView().setBackgroundColor(Color.BLUE);
+        //autocompleteFragmentFrom.getView().setBackgroundColor(Color.BLUE);
 
 
         autocompleteFragmentFrom.setOnPlaceSelectedListener(new PlaceSelectionListener() {

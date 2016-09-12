@@ -12,6 +12,13 @@
     <string name="title_activity_information">InformationActivity</string>
     <string name="title_activity_feedback">FeedbackActivity</string>
 
+
+    <!-- Direction Act-->
+    <string name="pick_up">Pick Up: </string>
+    <string name="drop_off">Drop Off: </string>
+
+
+
     <!-- Feedback View-->
     <string name="feedback_subtitle">Feedback on walk / app / Walkhome:</string>
     <string name="feedback_date">Date (required)</string>
