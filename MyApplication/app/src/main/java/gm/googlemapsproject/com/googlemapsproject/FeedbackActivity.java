@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 public class FeedbackActivity extends AppCompatActivity {
 
@@ -35,6 +37,17 @@ public class FeedbackActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+
+        ToggleButton Btn= new ToggleButton(this);// or get it from the layout by ToggleButton Btn=(ToggleButton) findViewById(R.id.IDofButton);
+        Btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                if(isChecked)
+                    buttonView.setBackgroundColor(Color.GREEN);
+                else buttonView.setBackgroundColor(Color.RED);
+            }
+        });
     }//end onCreate
 
 }

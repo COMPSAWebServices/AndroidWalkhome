@@ -11,4 +11,9 @@
     <string name="title_activity_direction">DirectionActivity</string>
     <string name="title_activity_information">InformationActivity</string>
     <string name="title_activity_feedback">FeedbackActivity</string>
+
+    <!-- Feedback View-->
+    <string name="feedback_subtitle">Feedback on walk / app / Walkhome:</string>
+    <string name="feedback_date">Date (required)</string>
+    <string name="feedback_previous_walkinfo">Previous Walk Info</string>
 </resources>

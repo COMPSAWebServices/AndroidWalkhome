@@ -13,4 +13,70 @@
     tools:showIn="@layout/activity_feedback"
     android:background="#1ca7f7">
 
+    <TextView
+        android:id="@+id/feedback_subTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/feedback_subtitle"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+    <EditText
+        android:id="@+id/feedback_editText"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/feedback_subTitle"
+        android:layout_marginTop="10dp"
+        android:background="#fff" />
+    <TextView
+        android:id="@+id/feedback_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/feedback_date"
+        android:layout_below="@+id/feedback_editText"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="15dp" />
+
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButton"
+        android:layout_below="@+id/feedback_editText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/switch1"
+        android:checked="true"
+
+         />
+
+    <TextView
+        android:id="@+id/feedback_previous_walk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/feedback_previous_walkinfo"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/feedback_date"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch1"
+        android:layout_alignTop="@+id/feedback_previous_walk"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:textColor="#fff"
+        android:background="#1328c4"
+        android:layout_below="@+id/feedback_previous_walk"
+        android:layout_marginTop="20dp"/>
+
+
 </RelativeLayout>
