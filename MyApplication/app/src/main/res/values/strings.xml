@@ -18,9 +18,15 @@
     <string name="drop_off">Drop Off: </string>
 
 
-
     <!-- Feedback View-->
     <string name="feedback_subtitle">Feedback on walk / app / Walkhome:</string>
     <string name="feedback_date">Date (required)</string>
     <string name="feedback_previous_walkinfo">Previous Walk Info</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- Login Act-->
+    <string name="phone_number">Phone Number (This Device): </string>
+    <string name="login_info">Walkhome is a fully anonymous service. This account is for the purpose of sending you
+    notifications or calling you about your walk request. </string>
+    <string name="title_activity_main_login">MainLoginActivity</string>
 </resources>
