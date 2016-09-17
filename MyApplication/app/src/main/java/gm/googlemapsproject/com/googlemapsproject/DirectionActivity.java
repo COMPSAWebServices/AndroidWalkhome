@@ -88,6 +88,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         currentLat     = bundleCurrentLocation.getDouble("currentLat");
         currentLong    = bundleCurrentLocation.getDouble("currentLong");
 
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +96,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         //initialize the googleapi client for autocomplete
         //https://developers.google.com/places/android-api/start
