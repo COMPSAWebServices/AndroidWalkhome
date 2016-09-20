@@ -123,6 +123,8 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         //autocompleteFragmentFrom.getView().setBackgroundColor(Color.BLUE);
 
 
+
+
         autocompleteFragmentFrom.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             public void onPlaceSelected(Place place) {
                 currentLocation = place.getName().toString();
@@ -183,11 +185,31 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 if(flag==true){
                     //String message = "Testing";
 
+
+                    final Geocoder geocoder = new Geocoder(DirectionActivity.this, Locale.getDefault());
+
+
+
                     Bundle bundle = new Bundle();
                     bundle.putDouble("latFrom", currentLat);
                     bundle.putDouble("longFrom", currentLong);
                     bundle.putDouble("latTo", latTo);
                     bundle.putDouble("longTo", longTo);
+
+                    try {
+                        List<Address> addressesFrom = geocoder.getFromLocation(currentLat, currentLong, 1);
+                        String addressFrom = addressesFrom.get(0).getAddressLine(0);
+
+                        List<Address> addressesTo = geocoder.getFromLocation(latTo,longTo , 1);
+                        String addressTo = addressesTo.get(0).getAddressLine(0);
+
+                        bundle.putString("current_address_from", addressFrom);
+                        bundle.putString("current_address_to", addressTo);
+
+                    } catch(Exception e) {
+
+                    }
+
                     bundle.putBoolean("directionSent", true);
                     intent.putExtras(bundle);
                     startActivity(intent);

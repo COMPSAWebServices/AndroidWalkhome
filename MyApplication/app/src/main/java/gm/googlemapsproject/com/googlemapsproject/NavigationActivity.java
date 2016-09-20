@@ -61,7 +61,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.net.URL;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -82,7 +86,11 @@ public class NavigationActivity extends AppCompatActivity
     private double longFrom;
     private double latTo;
     private double longTo;
-    public boolean flag;
+    private String currentAddressFrom;
+    private String currentAddressTo;
+    private int phoneNumber;
+    private boolean flag;
+
 
     private LocationRequest currentLocationRequest;
     private Marker currentLocationMarker;
@@ -124,6 +132,8 @@ public class NavigationActivity extends AppCompatActivity
             latTo = bundle.getDouble("latTo");
             longTo = bundle.getDouble("longTo");
             flag = bundle.getBoolean("directionSent");
+            currentAddressFrom = bundle.getString("current_address_from");
+            currentAddressTo = bundle.getString("current_address_to");
 
             currentLat = latFrom;
             currentLong = longFrom;
@@ -447,6 +457,27 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
+    //sends the request to walkhome
+    public void addWalkToApi(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String time = sdf.format(calendar.getTime());
+        Context context = getApplicationContext();
+        Toast toast = Toast.makeText(context, time, Toast.LENGTH_LONG);
+        toast.show();
+
+        try{
+            URL url = null;
+            String response = null;
+            String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=201&pick_up_location=" + currentAddressFrom +
+                    "&drop_off_location" + currentAddressTo + "&phone_number" + phoneNumber;
+            url = new URL("http://localhost/Walkhome/api.php");
+        }catch (Exception e){
+
+        }
+
+    }//end addWalkToApi
+
     /***********************************************NAVIGATION DRAWER**************************************************************/
     @Override
     public void onBackPressed() {
@@ -485,8 +516,7 @@ public class NavigationActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        final Geocoder geocoder;
-        geocoder =new Geocoder(this, Locale.getDefault());
+        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
 
         if (id == R.id.about_walkhome) {
@@ -494,6 +524,7 @@ public class NavigationActivity extends AppCompatActivity
             Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
             startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
+            addWalkToApi();
 
         } else if (id == R.id.request_walk) {
             //setCurrentLocation();
