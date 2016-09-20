@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -48,12 +49,15 @@ import android.location.Geocoder;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class DirectionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;//for google places
     private double currentLat = 0;
     private double currentLong = 0;
+    private String currentAddress = "";
 
     private LatLng latlngFrom;
     private LatLng latlngTo;
@@ -75,7 +79,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_direction);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         //displays the back  button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -87,6 +90,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 
         currentLat     = bundleCurrentLocation.getDouble("currentLat");
         currentLong    = bundleCurrentLocation.getDouble("currentLong");
+        currentAddress = bundleCurrentLocation.getString("current_address");
 
         /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -111,7 +115,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_from);
 
-        autocompleteFragmentFrom.setHint("Current Location");
+        autocompleteFragmentFrom.setHint(currentAddress);
         //To bias autocomplete results to a specific geographic region
         autocompleteFragmentFrom.setBoundsBias(new LatLngBounds(new LatLng(currentLat, currentLong), new LatLng(currentLat, currentLong) ));
 
@@ -178,7 +182,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 //transfer Intent to NavigationAcitivty if it satisfies all the requirements
                 if(flag==true){
                     //String message = "Testing";
-                    //intent.putExtra("currentLocation", currentLocation);
+
                     Bundle bundle = new Bundle();
                     bundle.putDouble("latFrom", currentLat);
                     bundle.putDouble("longFrom", currentLong);
@@ -187,6 +191,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     bundle.putBoolean("directionSent", true);
                     intent.putExtras(bundle);
                     startActivity(intent);
+
                 }
             }
         });

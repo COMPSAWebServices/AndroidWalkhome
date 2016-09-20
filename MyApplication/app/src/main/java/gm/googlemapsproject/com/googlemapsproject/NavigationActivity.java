@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -60,6 +62,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -481,6 +485,9 @@ public class NavigationActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        final Geocoder geocoder;
+        geocoder =new Geocoder(this, Locale.getDefault());
+
 
         if (id == R.id.about_walkhome) {
             // Handle the camera action
@@ -494,8 +501,17 @@ public class NavigationActivity extends AppCompatActivity
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
             setBundle.putDouble("currentLong", currentLong);
+
+            try {
+                List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
+                String address = addresses.get(0).getAddressLine(0);
+                setBundle.putString("current_address", address);
+            } catch(Exception e){
+
+            }
             currentLocationIntent.putExtras(setBundle);
             startActivity(currentLocationIntent);
+
         }
          /*
         else if (id == R.id.nav_manage) {
