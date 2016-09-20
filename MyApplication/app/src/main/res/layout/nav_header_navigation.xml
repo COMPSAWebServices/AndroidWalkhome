@@ -19,7 +19,7 @@
         android:src="@android:drawable/sym_def_app_icon"
         />
 
-
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,5 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="sungly.77@gmail.com" />
-
+    -->
+    <TextView
+        android:id="@+id/entered_phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9057589989"/>
 </LinearLayout>

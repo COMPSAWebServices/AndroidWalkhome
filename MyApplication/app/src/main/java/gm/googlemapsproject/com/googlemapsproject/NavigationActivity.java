@@ -78,6 +78,7 @@ public class NavigationActivity extends AppCompatActivity
     private double longFrom;
     private double latTo;
     private double longTo;
+    public boolean flag;
 
     private LocationRequest currentLocationRequest;
     private Marker currentLocationMarker;
@@ -101,6 +102,14 @@ public class NavigationActivity extends AppCompatActivity
         int duration = Toast.LENGTH_SHORT;
         ;//toast length
 
+
+        //googlemaps
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.content_map);
+        mapFragment.getMapAsync(this);
+
+
         try {
             //gets the intent from DirectionActivity
             Intent directionActivityIntent = this.getIntent();
@@ -110,17 +119,18 @@ public class NavigationActivity extends AppCompatActivity
             longFrom = bundle.getDouble("longFrom");
             latTo = bundle.getDouble("latTo");
             longTo = bundle.getDouble("longTo");
+            flag = bundle.getBoolean("directionSent");
 
             currentLat = latFrom;
             currentLong = longFrom;
 
         } catch (Exception e) {
             //if the application just started and can't the bundle from DirectionActivity.
-            if ((currentLat == 0) && (currentLong == 0)) {
-                Toast toast = Toast.makeText(context, "setting current location", duration);
-                //toast.show();
-                setCurrentLocation();
-            }
+//            if ((currentLat == 0) && (currentLong == 0)) {
+//                Toast toast = Toast.makeText(context, "setting current location", duration);
+//                //toast.show();
+//               // setCurrentLocation();
+//            }
         }
 
 
@@ -146,15 +156,9 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //googlemaps
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.content_map);
-        mapFragment.getMapAsync(this);
-
 
         //calls setDirection if we know that the user has already entered their destination
-        if ((currentLat != 0) && (latTo != 0)) {
+        if (flag == true) {
             setDirections();
         }
 
@@ -214,82 +218,84 @@ public class NavigationActivity extends AppCompatActivity
                 });
     }
 
+
     /***********************************************CURRENT LOCATION**************************************************************/
     /*Current location from GPS_PROVIDER gets the last known location, might not be accurate so we're going to have to change this.*/
-    public void setCurrentLocation() {
-        //gets location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        provider = locationManager.getBestProvider(criteria, false);
-        Context context = getApplicationContext();
-        try {
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (location != null) {
-                getCurrentLocation(location);
-            } else {//if location not found
-                //set location to queens campus
-                setDefaultLocation();
-                enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-                //checks if gps is not enabled
-                if (!enabled) {
-                    /*new AlertDialog.Builder(MapsActivity.this); ==> so its not applicationContext, it needs to be <currentactivity>.this*/
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-                    builder1.setMessage("Please turn on your GPS!");
-                    builder1.setCancelable(true);
-
-                    builder1.setPositiveButton(
-                            "Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                    /* take them to enable their gps
-                                    * Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    startActivity(intent);*/
-                                }
-                            });
-
-                    /*Maybe take this out*/
-                    builder1.setNegativeButton(
-                            "No",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
-                } else {
-                    //gps is on
-                }
-            }
-        } catch (SecurityException e) {
-
-            //dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
-            Toast toast = Toast.makeText(context, "Please turn on your GPS!", duration);
-            toast.show();
-        }//end catch
-    }//end setCurrentLocation
-
-    /*gets the current location from the user and stores it into currentLat and currentLong*/
-    public void getCurrentLocation(Location location) {
-
-        currentLat = location.getLatitude();
-        currentLong = location.getLongitude();
-    }//end getCurrentLocation;
-
-    //if gps is not set, sets the location somewhere
-    public void setDefaultLocation() {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        ;//toast length
-        Toast toast = Toast.makeText(context, "Setting default Location!", duration);
-        toast.show();
-        //LatLng queens = new LatLng(44.053607, -79.458481);
-        currentLat = 44.053607;
-        currentLong = -79.458481;
-    }//end setDefaultLocation
+//    public void setCurrentLocation() {
+//        //gets location manager
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        Criteria criteria = new Criteria();
+//        provider = locationManager.getBestProvider(criteria, false);
+//        Context context = getApplicationContext();
+//        try {
+//            Location location = locationManager.getLastKnownLocation(provider);
+//            if (location != null) {
+//                getCurrentLocation(location);
+//            } else {//if location not found
+//                //set location to queens campus
+//                setDefaultLocation();
+//                enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//
+//                //checks if gps is not enabled
+//                if (!enabled) {
+//                    /*new AlertDialog.Builder(MapsActivity.this); ==> so its not applicationContext, it needs to be <currentactivity>.this*/
+//                    AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+//                    builder1.setMessage("Please turn on your GPS!");
+//                    builder1.setCancelable(true);
+//
+//                    builder1.setPositiveButton(
+//                            "Ok",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    dialog.cancel();
+//                                    /* take them to enable their gps
+//                                    * Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                                    startActivity(intent);*/
+//                                }
+//                            });
+//
+//                    /*Maybe take this out*/
+//                    builder1.setNegativeButton(
+//                            "No",
+//                            new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    dialog.cancel();
+//                                }
+//                            });
+//
+//                    AlertDialog alert11 = builder1.create();
+//                    alert11.show();
+//                } else {
+//                    //gps is on
+//                }
+//            }
+//        } catch (SecurityException e) {
+//
+//            //dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
+//            Toast toast = Toast.makeText(context, "Please turn on your GPS!", duration);
+//            toast.show();
+//        }//end catch
+//    }//end setCurrentLocation
+//
+//    /*gets the current location from the user and stores it into currentLat and currentLong*/
+//    public void getCurrentLocation(Location location) {
+//
+//        currentLat = location.getLatitude();
+//        currentLong = location.getLongitude();
+//    }//end getCurrentLocation;
+//
+//    //if gps is not set, sets the location somewhere
+//    public void setDefaultLocation() {
+//        Context context = getApplicationContext();
+//        int duration = Toast.LENGTH_SHORT;
+//        ;//toast length
+//        Toast toast = Toast.makeText(context, "Setting default Location!", duration);
+//        toast.show();
+//        //LatLng queens = new LatLng(44.053607, -79.458481);
+//        currentLat = 44.053607;
+//        currentLong = -79.458481;
+//    }//end setDefaultLocation
 
     /***********************************************CURRENT LOCATION**************************************************************/
 
@@ -342,6 +348,101 @@ public class NavigationActivity extends AppCompatActivity
     /***********************************************GGOOGLE MAPS**************************************************************/
 
 
+
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+
+    //sets the time interval
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location userLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (userLastLocation != null) {
+            currentLat = userLastLocation.getLatitude();
+            currentLong = userLastLocation.getLongitude();
+            LatLng currentLatLong = new LatLng(currentLat, currentLong);
+            MarkerOptions currentMarker = new MarkerOptions();
+            currentMarker.position(currentLatLong);
+            currentMarker.title("Current Location");
+            currentLocationMarker = mMap.addMarker(currentMarker);
+            //sets the map at the current location
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 16));
+
+        }
+        //checks for current location every interval
+        currentLocationRequest = new LocationRequest();
+        currentLocationRequest.setInterval(50000); //50 seconds
+        currentLocationRequest.setFastestInterval(60000); //60 seconds
+        currentLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        //google maps current location
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, currentLocationRequest, this);
+
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+        }
+        currentLat = location.getLatitude();
+        currentLong = location.getLongitude();
+        LatLng newCurrentLatLng = new LatLng(currentLat,currentLong );
+        MarkerOptions currentMarker = new MarkerOptions();
+        currentMarker.position(newCurrentLatLng);
+        currentMarker.title("Current Location");
+        currentLocationMarker = mMap.addMarker(currentMarker);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(newCurrentLatLng).zoom(16).build();
+
+        //mMap.animateCamera(CameraUpdateFactory
+                //.newCameraPosition(cameraPosition));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newCurrentLatLng, 16));
+
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
     /***********************************************NAVIGATION DRAWER**************************************************************/
     @Override
     public void onBackPressed() {
@@ -383,10 +484,12 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.about_walkhome) {
             // Handle the camera action
+            Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
+            startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
 
         } else if (id == R.id.request_walk) {
-            setCurrentLocation();
+            //setCurrentLocation();
             Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
@@ -397,98 +500,15 @@ public class NavigationActivity extends AppCompatActivity
          /*
         else if (id == R.id.nav_manage) {
 
-        } */
+        }
         else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    //sets the time interval
-    @Override
-    public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location userLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if (userLastLocation != null) {
-            LatLng currentLatLong = new LatLng(userLastLocation.getLatitude(), userLastLocation.getLongitude());
-            MarkerOptions currentMarker = new MarkerOptions();
-            currentMarker.position(currentLatLong);
-            currentMarker.title("Current Location");
-            currentLocationMarker = mMap.addMarker(currentMarker);
-
-        }
-        currentLocationRequest = new LocationRequest();
-        currentLocationRequest.setInterval(5000); //5 seconds
-        currentLocationRequest.setFastestInterval(3000); //3 seconds
-        currentLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, currentLocationRequest, this);
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (currentLocationMarker != null) {
-            currentLocationMarker.remove();
-        }
-
-        LatLng newCurrentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions currentMarker = new MarkerOptions();
-        currentMarker.position(newCurrentLatLng);
-        currentMarker.title("Current Location");
-        currentLocationMarker = mMap.addMarker(currentMarker);
-
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(newCurrentLatLng).zoom(16).build();
-
-        mMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 }
