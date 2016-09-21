@@ -61,7 +61,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -468,10 +472,19 @@ public class NavigationActivity extends AppCompatActivity
 
         try{
             URL url = null;
+            StringBuilder result = new StringBuilder();
             String response = null;
             String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=201&pick_up_location=" + currentAddressFrom +
                     "&drop_off_location" + currentAddressTo + "&phone_number" + phoneNumber;
-            url = new URL("http://localhost/Walkhome/api.php");
+            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php?"+parameters);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            BufferedReader in =  new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while((response = in.readLine())!= null){
+                result.append(response);
+            }
+            in.close();
+            System.out.println(result.toString());
+
         }catch (Exception e){
 
         }
