@@ -38,6 +38,7 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -61,9 +62,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -76,7 +80,16 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
+
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -168,7 +181,8 @@ public class NavigationActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                addWalkToApi();
+                //addWalkToApi();
+                sendDataToWalkhome();
 
             }
         });
@@ -471,41 +485,53 @@ public class NavigationActivity extends AppCompatActivity
 
     //sends the request to walkhome
     public void addWalkToApi(){
+        int status;
+        phoneNumber = "9055456969";
+        URL url = null;
+        StringBuilder result = new StringBuilder();
+        String response = null;
+        HttpURLConnection connection;
+
+
+        //gets the current time
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String time = sdf.format(calendar.getTime());
+
         Context context = getApplicationContext();
         Toast toast = Toast.makeText(context, time, Toast.LENGTH_LONG);
-        phoneNumber = "9055456969";
+
         toast.show();
+
+        String parameters = "?function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
+                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+
 
 
         try{
-            URL url = null;
-            StringBuilder result = new StringBuilder();
-            String response = null;
-            String parameters = "?function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                    "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+            String paramUTF8 = URLEncoder.encode(parameters, "utf-8");
+            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
+            connection = (HttpURLConnection)url.openConnection();
+            connection.setDoOutput(true);
+            //connection.setDoInput(true);
+
+
+
 
             //http://localhost/Walkhome/api.php?function=addWalk&phone=6132030017&team=1&time=2013-08-05%2018:19:03&status=1&up=Leggett%20Hall&drop=ARC
             //String parameters = "?function=addWalk&phone_number="+ phoneNumber +"&team=1&request_time=" + time +"&status=1&pick_up_location=" + currentAddressTo+ "&drop_off_location=" + currentAddressFrom;
-            String paramUTF8 = URLEncoder.encode(parameters, "utf-8");
-
-            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
-
-
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-
 
             //send request
-            OutputStreamWriter dos = new OutputStreamWriter(connection.getOutputStream());
-            dos.write(paramUTF8);
+            //OutputStreamWriter dos = new OutputStreamWriter(connection.getOutputStream());
+            //dos.write(paramUTF8);
 
+
+            //dos.flush();
+
+            OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+
+            writeStream(out, paramUTF8);
             System.out.println("TEStINGTsetinsg");
-            dos.flush();
 
             BufferedReader in =  new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while((response = in.readLine())!= null){
@@ -517,11 +543,78 @@ public class NavigationActivity extends AppCompatActivity
 
         }catch (Exception e){
 
-        }
+        }//end catch
 
     }//end addWalkToApi
 
-    /***********************************************NAVIGATION DRAWER**************************************************************/
+    //write stream function
+    public void writeStream(OutputStream out, String paramString) throws IOException {
+        out.write(paramString.getBytes());
+        out.flush();
+        out.close();
+    }
+
+    public void sendDataToWalkhome(){
+        phoneNumber = "9055456969";
+        URL url = null;
+        StringBuilder result = new StringBuilder();
+        //String response = null;
+
+
+        //gets the current time
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String time = sdf.format(calendar.getTime());
+
+        String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
+                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+        String parameters2 = "?function=addWalk&phone_number="+ phoneNumber +"&team=1&request_time=" + time +
+                "&status=1&pick_up_location=" + currentAddressTo+ "&drop_off_location=" + currentAddressFrom;
+
+        //url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
+        try{
+            System.out.println("Before Reponse. READY TO GO");
+            OkHttpClient connection = new OkHttpClient();
+            /*
+            RequestBody body = new FormBody.Builder()
+
+                    .add("function", "addWalk")
+                    .add("team","1")
+                    .add("request_time", time)
+                    .add("status", "1")
+                    .add("pick_up_location", currentAddressFrom)
+                    .add("drop_off_location", currentAddressTo)
+                    .add("phone_number", phoneNumber)
+
+                    .add("", "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
+                            "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber)
+                    .build();*/
+            System.out.println("BODY READY TO GO");
+            Request request = new Request.Builder()
+                    .url("http://www.backstage.compsawebservices.com/walkhome/api.php?"+parameters)
+                    //.post(body)
+                    .build();
+
+            System.out.println("REQUEST READY TO GO");
+            //Response response = connection.newCall(request).execute();
+            //System.out.println("CONNECTION REPONSE" + response.toString());
+
+            connection.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    System.out.println("CONNECTION REPONSE: FAILED");
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    System.out.println("CONNECTION REPONSE: SUCCESS" + response);
+                }
+            });
+    } catch (Exception error){
+
+        }//end catch
+    }
+        /***********************************************NAVIGATION DRAWER**************************************************************/
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
