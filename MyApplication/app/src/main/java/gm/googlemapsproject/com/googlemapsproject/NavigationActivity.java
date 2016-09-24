@@ -62,16 +62,21 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.OkHttpClient;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -92,7 +97,7 @@ public class NavigationActivity extends AppCompatActivity
     private double longTo;
     private String currentAddressFrom;
     private String currentAddressTo;
-    private int phoneNumber;
+    private String phoneNumber;
     private boolean flag;
 
 
@@ -471,21 +476,43 @@ public class NavigationActivity extends AppCompatActivity
         String time = sdf.format(calendar.getTime());
         Context context = getApplicationContext();
         Toast toast = Toast.makeText(context, time, Toast.LENGTH_LONG);
+        phoneNumber = "9055456969";
         toast.show();
+
 
         try{
             URL url = null;
             StringBuilder result = new StringBuilder();
             String response = null;
-            String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=201&pick_up_location=" + currentAddressFrom +
-                    "&drop_off_location" + currentAddressTo + "&phone_number" + phoneNumber;
-            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php?"+parameters);
+            String parameters = "?function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
+                    "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+
+            //http://localhost/Walkhome/api.php?function=addWalk&phone=6132030017&team=1&time=2013-08-05%2018:19:03&status=1&up=Leggett%20Hall&drop=ARC
+            //String parameters = "?function=addWalk&phone_number="+ phoneNumber +"&team=1&request_time=" + time +"&status=1&pick_up_location=" + currentAddressTo+ "&drop_off_location=" + currentAddressFrom;
+            String paramUTF8 = URLEncoder.encode(parameters, "utf-8");
+
+            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
+
+
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+
+            //send request
+            OutputStreamWriter dos = new OutputStreamWriter(connection.getOutputStream());
+            dos.write(paramUTF8);
+
+            System.out.println("TEStINGTsetinsg");
+            dos.flush();
+
             BufferedReader in =  new BufferedReader(new InputStreamReader(connection.getInputStream()));
             while((response = in.readLine())!= null){
                 result.append(response);
             }
             in.close();
+
             System.out.println(result.toString());
 
         }catch (Exception e){
