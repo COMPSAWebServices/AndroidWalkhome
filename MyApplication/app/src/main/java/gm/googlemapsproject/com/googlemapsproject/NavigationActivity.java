@@ -560,11 +560,13 @@ public class NavigationActivity extends AppCompatActivity
         StringBuilder result = new StringBuilder();
         //String response = null;
 
-
         //gets the current time
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String time = sdf.format(calendar.getTime());
+
+        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd");
+        time = mdformat.format(calendar.getTime()) + " " + time;
 
         String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
                 "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
