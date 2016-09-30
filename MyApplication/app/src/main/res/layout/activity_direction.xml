@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="gm.googlemapsproject.com.googlemapsproject.DirectionActivity">
+    tools:context="com.compsawebservices.Walkhome.DirectionActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
 
     android:layout_gravity="center"
-    tools:context="gm.googlemapsproject.com.googlemapsproject.MainLoginActivity">
+    tools:context="com.compsawebservices.Walkhome.MainLoginActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package gm.googlemapsproject.com.googlemapsproject;
+package com.compsawebservices.com.Walkhome;
 
 import org.junit.Test;
 

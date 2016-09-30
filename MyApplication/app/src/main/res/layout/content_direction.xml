@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="gm.googlemapsproject.com.googlemapsproject.DirectionActivity"
+    tools:context="com.compsawebservices.Walkhome.DirectionActivity"
     tools:showIn="@layout/activity_direction"
     android:orientation="vertical"
     android:weightSum="1">

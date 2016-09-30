@@ -1,4 +1,4 @@
-package gm.googlemapsproject.com.googlemapsproject;
+package com.compsawebservices.com.Walkhome;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

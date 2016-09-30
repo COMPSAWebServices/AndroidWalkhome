@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="gm.googlemapsproject.com.googlemapsproject">
+    package="com.compsawebservices.Walkhome">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -11,7 +11,7 @@
 
     <!-- Google map required permissions -->
     <permission
-        android:name="gm.googlemapsproject.com.googlemapsproject.permission.MAPS_RECIEVE"
+        android:name="com.compsawebservices.Walkhome.permission.MAPS_RECIEVE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
@@ -52,34 +52,35 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".NavigationActivity"
+            android:name="com.compsawebservices.Walkhome.NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
 
         </activity>
         <activity
-            android:name=".MapsActivity"
+            android:name="com.compsawebservices.Walkhome.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".DirectionActivity"
+            android:name="com.compsawebservices.Walkhome.DirectionActivity"
             android:label="@string/title_activity_direction"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".InformationActivity"
+            android:name="com.compsawebservices.Walkhome.InformationActivity"
             android:label="@string/title_activity_information"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".FeedbackActivity"
+            android:name="com.compsawebservices.Walkhome.FeedbackActivity"
             android:label="@string/title_activity_feedback"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainLoginActivity"
+            android:name="com.compsawebservices.Walkhome.MainLoginActivity"
             android:label="@string/title_activity_main_login"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>^
         </activity>
     </application>
 

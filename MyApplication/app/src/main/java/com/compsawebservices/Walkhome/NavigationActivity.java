@@ -1,23 +1,17 @@
-package gm.googlemapsproject.com.googlemapsproject;
+package com.compsawebservices.Walkhome;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -38,20 +33,13 @@ import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -60,35 +48,23 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import com.compsawebservices.Walkhome.R;
 
 
 public class NavigationActivity extends AppCompatActivity
@@ -96,30 +72,24 @@ public class NavigationActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;//for google places
-    private Circle circle;
     private double currentLat = 0;
     private double currentLong = 0;
-    private LocationManager locationManager; //to get the user's current location from gps
-    private String provider;
-    private boolean enabled;
-    private static final String TAG = "";
-
     private double latFrom;
     private double longFrom;
     private double latTo;
     private double longTo;
     private String currentAddressFrom;
     private String currentAddressTo;
+
+    private String phoneNumberTemp;
     private String phoneNumber;
-    private boolean flag;
-
-
+    private boolean flag = false;
     private LocationRequest currentLocationRequest;
     private Marker currentLocationMarker;
 
+    private Boolean keepPhone = true;
 
-    private int duration = Toast.LENGTH_SHORT;
-    ;//toast length
+    private Polyline queensBoundary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,65 +98,40 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //sets toolbar colour
         toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
-
         getSupportActionBar().setTitle("WalkHome");
 
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
-        ;//toast length
-
 
         //googlemaps
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.content_map);
         mapFragment.getMapAsync(this);
 
-
-        try {
-            //gets the intent from DirectionActivity
-            Intent directionActivityIntent = this.getIntent();
-            Bundle bundle = directionActivityIntent.getExtras();
-            //String intentMessage = intent.getStringExtra("currentLocation");
-            latFrom = bundle.getDouble("latFrom");
-            longFrom = bundle.getDouble("longFrom");
-            latTo = bundle.getDouble("latTo");
-            longTo = bundle.getDouble("longTo");
-            flag = bundle.getBoolean("directionSent");
-            currentAddressFrom = bundle.getString("current_address_from");
-            currentAddressTo = bundle.getString("current_address_to");
-
-            currentLat = latFrom;
-            currentLong = longFrom;
-
-        } catch (Exception e) {
-            //if the application just started and can't the bundle from DirectionActivity.
-//            if ((currentLat == 0) && (currentLong == 0)) {
-//                Toast toast = Toast.makeText(context, "setting current location", duration);
-//                //toast.show();
-//               // setCurrentLocation();
-//            }
+        //gets the information on DirectionAct in a try catch
+        //gets the intent from DirectionActivity
+        /*
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        phoneNumberTemp = bundle.getString("phonenumber");
+        if(phoneNumberTemp!=null || phoneNumberTemp==""){
+            phoneNumber = phoneNumberTemp;
         }
+        try{
+
+            checkDirectionIntent();
+        }catch (Exception e){}
+        */
 
 
-        Toast toast = Toast.makeText(context, Double.toString(latFrom), duration);
-        //toast.show();
 
-        //floating button -> ***Change this later
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                //addWalkToApi();
-                sendDataToWalkhome();
 
-            }
-        });
+        //this is the super lazy way to do this but its 3:50am...
 
+
+        //navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -197,33 +142,108 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+        //Floating Action Button
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        //fab.setVisibility(View.GONE);
+
         //calls setDirection if we know that the user has already entered their destination
-        if (flag == true) {
+        //shows the direction
+
+
+        if (flag) {
+
             setDirections();
+            assert fab != null;
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            //.setAction("Action", null).show();
+                    //addWalkToApi();
+                    sendDataToWalkhome();
+
+                }
+            });
         }
+        //change the fab icon to direction when flag if false
+        else{
+            fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.direction));
+            fab.setOnClickListener(new View.OnClickListener() {
+                //redirects to DirectionAct if user clicks on the direction fab icon
+                @Override
+                public void onClick(View v) {
+                    flag = false;
 
+                    final Geocoder geocoder = new Geocoder(NavigationActivity.this, Locale.getDefault());
+                    Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+                    Bundle setBundle = new Bundle();
+                    setBundle.putDouble("currentLat", currentLat);
+                    setBundle.putDouble("currentLong", currentLong);
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
+                        String address = addresses.get(0).getAddressLine(0);
+                        setBundle.putString("current_address", address);
+                    } catch(Exception e){
 
+                    }
+                    currentLocationIntent.putExtras(setBundle);
+                    startActivity(currentLocationIntent);
+                }
+            });//end fab onClick
+        }//end else
     }//end onCreate
 
-    /**Get the directions**/
+    public void getPhoneNumber(String value){
+        phoneNumber = value;
+    }
+
+    //Function to handle intents
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 111){
+            if(resultCode == RESULT_OK){
+                //Bundle bundle = data.getExtras();
+                //phoneNumber = data.getStringExtra()
+            }
+        }
+    }
+    protected void checkDirectionIntent(){
+        try {
+
+            //gets the intent from DirectionActivity
+            Intent intent = this.getIntent();
+            Bundle bundle = intent.getExtras();
+
+            //String intentMessage = intent.getStringExtra("currentLocation");
+            latFrom = bundle.getDouble("latFrom");
+            longFrom = bundle.getDouble("longFrom");
+            latTo = bundle.getDouble("latTo");
+            longTo = bundle.getDouble("longTo");
+            currentAddressFrom = bundle.getString("current_address_from");
+            currentAddressTo = bundle.getString("current_address_to");
+            flag = bundle.getBoolean("directionSent");
+            System.out.println(phoneNumber);
+
+
+            currentLat = latFrom;
+            currentLong = longFrom;
+
+        } catch (Exception e) {} //end try-catch
+    }
+
+
+
+    /**Shows directions**/
     public void setDirections() {
         //requires server key instead of the api key
-        GoogleDirection.withServerKey("AIzaSyA5w5A7o_V_gyeNwsTg_pjjN1e7eF_la4s")
+        GoogleDirection.withServerKey("AIzaSyCYctX1XOL-9KrVqbLUrDSrgABssH5lmTU")
                 .from(new LatLng(currentLat, currentLong))
                 .to(new LatLng(latTo, longTo))
                 .avoid(AvoidType.FERRIES)
                 .avoid(AvoidType.HIGHWAYS)
                 .transportMode(TransportMode.WALKING)
                 .execute(new DirectionCallback() {
-                            /*
-                            @Override
-                            public void onDirectionSuccess(Path.Direction direction, String rawBody) {
-                                if(direction.isOK()) {
-                                    // Do something
-                                } else {
-                                    // Do something
-                                }
-                            }*/
 
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
@@ -256,88 +276,8 @@ public class NavigationActivity extends AppCompatActivity
                     }
 
                 });
-    }
+    }//ends setDirections
 
-
-    /***********************************************CURRENT LOCATION**************************************************************/
-    /*Current location from GPS_PROVIDER gets the last known location, might not be accurate so we're going to have to change this.*/
-
-//    public void setCurrentLocation() {
-//        //gets location manager
-//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        Criteria criteria = new Criteria();
-//        provider = locationManager.getBestProvider(criteria, false);
-//        Context context = getApplicationContext();
-//        try {
-//            Location location = locationManager.getLastKnownLocation(provider);
-//            if (location != null) {
-//                getCurrentLocation(location);
-//            } else {//if location not found
-//                //set location to queens campus
-//                setDefaultLocation();
-//                enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//
-//                //checks if gps is not enabled
-//                if (!enabled) {
-//                    /*new AlertDialog.Builder(MapsActivity.this); ==> so its not applicationContext, it needs to be <currentactivity>.this*/
-//                    AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-//                    builder1.setMessage("Please turn on your GPS!");
-//                    builder1.setCancelable(true);
-//
-//                    builder1.setPositiveButton(
-//                            "Ok",
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int id) {
-//                                    dialog.cancel();
-//                                    /* take them to enable their gps
-//                                    * Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                                    startActivity(intent);*/
-//                                }
-//                            });
-//
-//                    /*Maybe take this out*/
-//                    builder1.setNegativeButton(
-//                            "No",
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int id) {
-//                                    dialog.cancel();
-//                                }
-//                            });
-//
-//                    AlertDialog alert11 = builder1.create();
-//                    alert11.show();
-//                } else {
-//                    //gps is on
-//                }
-//            }
-//        } catch (SecurityException e) {
-//
-//            //dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
-//            Toast toast = Toast.makeText(context, "Please turn on your GPS!", duration);
-//            toast.show();
-//        }//end catch
-//    }//end setCurrentLocation
-//
-//    /*gets the current location from the user and stores it into currentLat and currentLong*/
-//    public void getCurrentLocation(Location location) {
-//
-//        currentLat = location.getLatitude();
-//        currentLong = location.getLongitude();
-//    }//end getCurrentLocation;
-//
-//    //if gps is not set, sets the location somewhere
-//    public void setDefaultLocation() {
-//        Context context = getApplicationContext();
-//        int duration = Toast.LENGTH_SHORT;
-//        ;//toast length
-//        Toast toast = Toast.makeText(context, "Setting default Location!", duration);
-//        toast.show();
-//        //LatLng queens = new LatLng(44.053607, -79.458481);
-//        currentLat = 44.053607;
-//        currentLong = -79.458481;
-//    }//end setDefaultLocation
-
-    /***********************************************CURRENT LOCATION**************************************************************/
 
     /***********************************************GGOOGLE MAPS**************************************************************/
     @Override
@@ -381,13 +321,9 @@ public class NavigationActivity extends AppCompatActivity
 
             */
 
-        //TESTING
         buildGoogleApiClient();
         mGoogleApiClient.connect();
     }//end on mapready
-    /***********************************************GGOOGLE MAPS**************************************************************/
-
-
 
 
     protected synchronized void buildGoogleApiClient() {
@@ -424,7 +360,7 @@ public class NavigationActivity extends AppCompatActivity
             currentMarker.title("Current Location");
             currentLocationMarker = mMap.addMarker(currentMarker);
             //sets the map at the current location
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 16));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 14));
 
         }
         //checks for current location every interval
@@ -436,6 +372,83 @@ public class NavigationActivity extends AppCompatActivity
         //google maps current location
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, currentLocationRequest, this);
 
+        //poly line
+
+        PolylineOptions queensBoundaryPolyLine = new PolylineOptions()
+                //I blame IOS people for making me to this...
+                .add(new LatLng(44.219465,-76.507441 ))
+                .add(new LatLng(44.221433,-76.507688))
+                .add(new LatLng(44.221041,-76.512731))
+                .add(new LatLng(44.223515,-76.512965))
+                .add(new LatLng(44.222900,-76.515014))
+                .add(new LatLng(44.223500,-76.515229))
+                .add(new LatLng(44.223592,-76.516162))
+                .add(new LatLng(44.224353,-76.516237))
+                .add(new LatLng(44.224330,-76.516977))
+                .add(new LatLng(44.229039,-76.517526))
+                .add(new LatLng(44.232393,-76.518086))
+                .add(new LatLng(44.231913,-76.520351))
+                .add(new LatLng(44.232005,-76.520914))
+                .add(new LatLng(44.232612,-76.522405))
+                .add(new LatLng(44.233012,-76.522845))
+                .add(new LatLng(44.240166,-76.523437))
+                .add(new LatLng(44.241219,-76.511355))
+                .add(new LatLng(44.240358,-76.509413))
+                .add(new LatLng(44.238836,-76.505905))
+                .add(new LatLng(44.239812,-76.505948))
+                .add(new LatLng(44.238920,-76.503952))
+                .add(new LatLng(44.238958,-76.503351))
+                .add(new LatLng(44.238551,-76.502021))
+                .add(new LatLng(44.238720,-76.497933))
+                .add(new LatLng(44.239197,-76.497976))
+                .add(new LatLng(44.239274,-76.496506))
+                .add(new LatLng(44.239043,-76.496463))
+                .add(new LatLng(44.238151,-76.494349))
+                .add(new LatLng(44.237966,-76.493662))
+                .add(new LatLng(44.237566,-76.492729))
+                .add(new LatLng(44.235383,-76.489553))
+                .add(new LatLng(44.234841,-76.486699))
+                .add(new LatLng(44.234820,-76.482682))
+                .add(new LatLng(44.234543,-76.481631))
+                .add(new LatLng(44.234220,-76.481309))
+                .add(new LatLng(44.234112,-76.480912))
+                .add(new LatLng(44.234058,-76.480655))
+                .add(new LatLng(44.233966,-76.480580))
+                .add(new LatLng(44.233814,-76.479593))
+                .add(new LatLng(44.233874,-76.479181))
+                .add(new LatLng(44.233905,-76.478976))
+                .add(new LatLng(44.233851,-76.478795))
+                .add(new LatLng(44.233667,-76.478634))
+                .add(new LatLng(44.233384,-76.477190));
+
+        queensBoundary = mMap.addPolyline(queensBoundaryPolyLine
+            .color(Color.BLUE));
+
+       double[] bllat = {44.220355, 44.221264, 44.224576, 44.223813, 44.224725, 44.225449, 44.227653,
+               44.226679, 44.225250, 44.224528, 44.223522, 44.229975, 44.230088, 44.230081, 44.228578,
+               44.228498, 44.228491, 44.228047, 44.227789, 44.227700, 44.227732, 44.228022, 44.229008,
+               44.228843, 44.228082, 44.228845, 44.228902, 44.228995, 44.229276, 44.229394, 44.229377,
+               44.229693, 44.228681, 44.228223, 44.227765, 44.227637, 44.226912, 44.226770, 44.226356,
+               44.227219, 44.226975, 44.227729, 44.226595, 44.226315, 44.226039, 44.225501, 44.225376,
+               44.224644, 44.224671, 44.224452, 44.225414, 44.227114, 44.226312, 44.225717, 44.224966,
+               44.224838, 44.224116, 44.223397, 44.222783, 44.224435, 44.223787};
+
+        double[] blLong = {-76.507071, -76.506446, -76.509949, -76.513372, -76.513421, -76.514355, -76.514087,
+                -76.516331, -76.516608, -76.516004, -76.515209, -76.516415, -76.497494, -76.497933, -76.497471,
+                -76.497948, -76.498151, -76.497865, -76.497740, -76.498158, -76.498021, -76.496618, -76.495883,
+                -76.495386, -76.494686, -76.493141, -76.494458, -76.494284, -76.494703, -76.494104, -76.493692,
+                -76.494316, -76.492179, -76.491696, -76.491683, -76.492972, -76.493336, -76.492542, -76.492495,
+                -76.493992, -76.494643,  -76.495372, -76.494231, -76.494045, -76.494819, -76.494505, -76.495151,
+                -76.494424, -76.493998, -76.495275, -76.492918, -76.490860, -76.491681, -76.491152, -76.490990,
+                -76.491794, -76.491418, -76.491611, -76.491114, -76.493697, -76.495562};
+
+        for(int i=0; i<61; i++){
+            mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(bllat[i], blLong[i]))
+                    .radius(20)
+                    .strokeColor(Color.WHITE)
+                    .fillColor(Color.BLUE));
+        }
 
     }
 
@@ -458,11 +471,11 @@ public class NavigationActivity extends AppCompatActivity
         currentLocationMarker = mMap.addMarker(currentMarker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(newCurrentLatLng).zoom(16).build();
+                .target(newCurrentLatLng).zoom(14).build();
 
         //mMap.animateCamera(CameraUpdateFactory
                 //.newCameraPosition(cameraPosition));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newCurrentLatLng, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newCurrentLatLng, 14));
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -483,79 +496,9 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
-    //sends the request to walkhome
-    public void addWalkToApi(){
-        int status;
-        phoneNumber = "9055456969";
-        URL url = null;
-        StringBuilder result = new StringBuilder();
-        String response = null;
-        HttpURLConnection connection;
-
-
-        //gets the current time
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String time = sdf.format(calendar.getTime());
-
-        Context context = getApplicationContext();
-        Toast toast = Toast.makeText(context, time, Toast.LENGTH_LONG);
-
-        toast.show();
-
-        String parameters = "?function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
-
-
-
-        try{
-            String paramUTF8 = URLEncoder.encode(parameters, "utf-8");
-            url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setDoOutput(true);
-            //connection.setDoInput(true);
-
-
-
-
-            //http://localhost/Walkhome/api.php?function=addWalk&phone=6132030017&team=1&time=2013-08-05%2018:19:03&status=1&up=Leggett%20Hall&drop=ARC
-            //String parameters = "?function=addWalk&phone_number="+ phoneNumber +"&team=1&request_time=" + time +"&status=1&pick_up_location=" + currentAddressTo+ "&drop_off_location=" + currentAddressFrom;
-
-            //send request
-            //OutputStreamWriter dos = new OutputStreamWriter(connection.getOutputStream());
-            //dos.write(paramUTF8);
-
-
-            //dos.flush();
-
-            OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-
-            writeStream(out, paramUTF8);
-            System.out.println("TEStINGTsetinsg");
-
-            BufferedReader in =  new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            while((response = in.readLine())!= null){
-                result.append(response);
-            }
-            in.close();
-
-            System.out.println(result.toString());
-
-        }catch (Exception e){
-
-        }//end catch
-
-    }//end addWalkToApi
-
-    //write stream function
-    public void writeStream(OutputStream out, String paramString) throws IOException {
-        out.write(paramString.getBytes());
-        out.flush();
-        out.close();
-    }
-
+    //Once we have all the required information, send it to walkhome api
     public void sendDataToWalkhome(){
-        phoneNumber = "9055456969";
+        //phoneNumber = "9055456969";
         URL url = null;
         StringBuilder result = new StringBuilder();
         //String response = null;
@@ -570,52 +513,29 @@ public class NavigationActivity extends AppCompatActivity
 
         String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
                 "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
-        String parameters2 = "?function=addWalk&phone_number="+ phoneNumber +"&team=1&request_time=" + time +
-                "&status=1&pick_up_location=" + currentAddressTo+ "&drop_off_location=" + currentAddressFrom;
-
-        //url = new URL("http://www.backstage.compsawebservices.com/walkhome/api.php");
         try{
-            System.out.println("Before Reponse. READY TO GO");
             OkHttpClient connection = new OkHttpClient();
-            /*
-            RequestBody body = new FormBody.Builder()
-
-                    .add("function", "addWalk")
-                    .add("team","1")
-                    .add("request_time", time)
-                    .add("status", "1")
-                    .add("pick_up_location", currentAddressFrom)
-                    .add("drop_off_location", currentAddressTo)
-                    .add("phone_number", phoneNumber)
-
-                    .add("", "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                            "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber)
-                    .build();*/
-            System.out.println("BODY READY TO GO");
             Request request = new Request.Builder()
                     .url("http://www.backstage.compsawebservices.com/walkhome/api.php?"+parameters)
                     //.post(body)
                     .build();
 
-            System.out.println("REQUEST READY TO GO");
-            //Response response = connection.newCall(request).execute();
-            //System.out.println("CONNECTION REPONSE" + response.toString());
-
             connection.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
-                    System.out.println("CONNECTION REPONSE: FAILED");
+                    System.out.println("CONNECTION RESPONSE: FAILED");
                 }
 
                 @Override
                 public void onResponse(Response response) throws IOException {
-                    System.out.println("CONNECTION REPONSE: SUCCESS" + response);
+                    System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
                 }
             });
     } catch (Exception error){
 
         }//end catch
     }
+
         /***********************************************NAVIGATION DRAWER**************************************************************/
     @Override
     public void onBackPressed() {
@@ -662,10 +582,12 @@ public class NavigationActivity extends AppCompatActivity
             Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
             startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
-            addWalkToApi();
+            System.out.println("phonenumber: " + phoneNumber);
 
         } else if (id == R.id.request_walk) {
             //setCurrentLocation();
+            //resets the flag after user tries to request a new walk
+            flag = false;
             Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);

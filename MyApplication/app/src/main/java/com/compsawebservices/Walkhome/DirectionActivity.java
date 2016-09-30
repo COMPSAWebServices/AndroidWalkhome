@@ -1,37 +1,17 @@
-package gm.googlemapsproject.com.googlemapsproject;
+package com.compsawebservices.Walkhome;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Address;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.AvoidType;
-import com.akexorcist.googledirection.constant.RequestResult;
-import com.akexorcist.googledirection.constant.TransportMode;
-import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
@@ -43,14 +23,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
+
 import android.location.Geocoder;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import com.compsawebservices.Walkhome.R;
 
 public class DirectionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
@@ -71,7 +50,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 
     private int duration = Toast.LENGTH_SHORT;;//toast length
     private Boolean flag = false;
-
+    private String testing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +174,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     bundle.putDouble("longFrom", currentLong);
                     bundle.putDouble("latTo", latTo);
                     bundle.putDouble("longTo", longTo);
+                    bundle.putString("page", "directionAct");
 
                     try {
                         List<Address> addressesFrom = geocoder.getFromLocation(currentLat, currentLong, 1);
