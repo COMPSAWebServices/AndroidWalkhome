@@ -28,5 +28,5 @@
     <string name="phone_number">Phone Number (This Device): </string>
     <string name="login_info">Walkhome is a fully anonymous service. This account is for the purpose of sending you
     notifications or calling you about your walk request. </string>
-    <string name="title_activity_main_login">MainLoginActivity</string>
+    <string name="title_activity_main_login">Walkhome</string>
 </resources>
