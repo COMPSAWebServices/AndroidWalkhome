@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.compsawebservices.walkhome.MainActivity"
+    android:background="#1ca7f7">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/phone_number"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/user_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="start"
+        android:gravity="center_horizontal"
+        android:hint="613 555 5555"
+        android:inputType="textCapWords|textPersonName"
+        android:singleLine="true"
+        android:background="#fff"
+        android:layout_marginTop="27dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/login_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_info"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/user_phone_number"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+    <!--<ImageView-->
+        <!--android:id="@+id/walkhome_logo"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="120dp"-->
+        <!--android:src="@drawable/walkhomelogo"-->
+        <!--android:scaleType="fitXY"-->
+        <!--android:layout_above="@+id/login_button"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_marginBottom="43dp" />-->
+
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:layout_marginBottom="47dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#fff"
+        android:background="#1328c4"/>
+
+</RelativeLayout>
+
+
+
