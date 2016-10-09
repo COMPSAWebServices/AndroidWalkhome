@@ -106,6 +106,9 @@ public class NavigationActivity extends AppCompatActivity
 
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
+//
+//        Intent intent = this.getIntent();
+//        phoneNumber = intent.getStringExtra("phonenumber");
 
         //googlemaps
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -173,8 +176,7 @@ public class NavigationActivity extends AppCompatActivity
                     flag = false;
 
                     final Geocoder geocoder = new Geocoder(NavigationActivity.this, Locale.getDefault());
-                    /****###############################Uncomment later##################################################*/
-//                    Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+                    Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
                     Bundle setBundle = new Bundle();
                     setBundle.putDouble("currentLat", currentLat);
                     setBundle.putDouble("currentLong", currentLong);
@@ -187,8 +189,8 @@ public class NavigationActivity extends AppCompatActivity
                     } catch(Exception e){
 
                     }
-//                    currentLocationIntent.putExtras(setBundle);
-//                    startActivity(currentLocationIntent);
+                    currentLocationIntent.putExtras(setBundle);
+                    startActivity(currentLocationIntent);
                 }
             });//end fab onClick
         }//end else
@@ -197,13 +199,13 @@ public class NavigationActivity extends AppCompatActivity
     protected void checkDirectionIntent(){
         count++;
         try {
-//            Intent intent = this.getIntent();
-//            Bundle bundle = intent.getExtras();
-//            phoneNumber = bundle.getString("phonenumber");
-
-            //gets the intent from DirectionActivity
             Intent intent = this.getIntent();
             Bundle bundle = intent.getExtras();
+            phoneNumber = bundle.getString("phonenumber");
+
+            //gets the intent from DirectionActivity
+//            Intent intent = this.getIntent();
+//            Bundle bundle = intent.getExtras();
 
             //String intentMessage = intent.getStringExtra("currentLocation");
             latFrom = bundle.getDouble("latFrom");
@@ -237,7 +239,7 @@ public class NavigationActivity extends AppCompatActivity
     public void setDirections() {
         //requires server key instead of the api key
         //https://developers.google.com/maps/documentation/directions/?hl=en_US
-        GoogleDirection.withServerKey("AIzaSyB6zeQPLFI_rltHmuLfXflGFHG6Ym6Lta0")
+        GoogleDirection.withServerKey("AIzaSyC3cDAUEiTTuulM2zsUaF8cGlTts7KEkK8")
                 .from(new LatLng(currentLat, currentLong))
                 .to(new LatLng(latTo, longTo))
                 .avoid(AvoidType.FERRIES)
@@ -532,7 +534,7 @@ public class NavigationActivity extends AppCompatActivity
         time = mdformat.format(calendar.getTime()) + " " + time;
 
         String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+                "&drop_off_location=" + currentAddressTo + "&phone_number=9057589989" ;//+ phoneNumber;
         try{
             OkHttpClient connection = new OkHttpClient();
             Request request = new Request.Builder()
@@ -637,7 +639,7 @@ public class NavigationActivity extends AppCompatActivity
             //resets the flag after user tries to request a new walk
             flag = false;
             /****###############################Uncomment later##################################################*/
-//            Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+            Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
             setBundle.putDouble("currentLong", currentLong);
