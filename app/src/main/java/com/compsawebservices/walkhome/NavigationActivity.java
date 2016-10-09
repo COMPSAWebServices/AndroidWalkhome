@@ -629,8 +629,8 @@ public class NavigationActivity extends AppCompatActivity
         if (id == R.id.about_walkhome) {
             // Handle the camera action
             /****###############################Uncomment later##################################################*/
-//            Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
-//            startActivity(startActivityInformation);
+            Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
+            startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
             System.out.println("phonenumber: " + phoneNumber);
 
@@ -653,8 +653,8 @@ public class NavigationActivity extends AppCompatActivity
             } catch(Exception e){
 
             }
-//            currentLocationIntent.putExtras(setBundle);
-//            startActivity(currentLocationIntent);
+            currentLocationIntent.putExtras(setBundle);
+            startActivity(currentLocationIntent);
 
         }
          /*
