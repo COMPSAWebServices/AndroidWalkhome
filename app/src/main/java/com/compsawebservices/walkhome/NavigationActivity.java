@@ -160,8 +160,8 @@ public class NavigationActivity extends AppCompatActivity
                     sendDataToWalkhome();
 
                     /****###############################Uncomment later##################################################*/
-//                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
-//                    startActivity(startStatusIntent);
+                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
+                    startActivity(startStatusIntent);
 
                 }
             });
