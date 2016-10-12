@@ -18,7 +18,7 @@ import com.google.firebase.messaging.RemoteMessage;
  */
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
-    private static int status = 0;
+    private int status = 1;
 
 //    StatusActivity statusActivity = new StatusActivity();
     @Override
@@ -26,7 +26,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
         sendNotification(remoteMessage.getNotification().getBody());
-        status++;
 //        statusActivity.updateStatus();
 
         System.out.println("STATUSssssssssssssssssssss: " + status);

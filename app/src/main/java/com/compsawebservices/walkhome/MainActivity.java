@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getToken();//llk
 
         System.out.println("IDDDDDDDDDDDDD:" +FirebaseInstanceId.getInstance().getToken());
-
         phonenumber = (EditText) findViewById(R.id.user_phone_number);
         loginButton = (Button)findViewById(R.id.login_button);
         //phonenumber can't be empty
@@ -53,7 +52,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 phonenumberString = phonenumber.getText().toString().replace(" ","".replace("-", ""));
-                //TODO need to make sure its a phone number
+                try{
+                    phoneNumberVerification(phonenumberString);}
+                catch (Exception e){
+                    Context context =getApplicationContext();
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
+                }
                 //verifying that inputted phone number could be a phone number
 
                 String parameters = "function=createUser&phone="+ phonenumberString + "&device_token="+FirebaseInstanceId.getInstance().getToken();
@@ -86,5 +91,11 @@ public class MainActivity extends AppCompatActivity {
                     finish();
             }
         });
+    }
+
+    private void phoneNumberVerification(String phonenumber)throws IOException{
+        if (phonenumber.length() != 10){
+            throw new IOException();
+        }
     }
 }

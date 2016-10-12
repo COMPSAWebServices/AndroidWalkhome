@@ -28,7 +28,7 @@ public class StatusActivity extends AppCompatActivity {
     private Button cancelWalk;
     private Button callWalkhome;
     private Button feedbackForm;
-
+    private int statusIncrementor;
     private int status;
 
 //    Firebase mRef;
@@ -96,7 +96,8 @@ public class StatusActivity extends AppCompatActivity {
 
         //get intent
         Intent intent = getIntent();
-        status = intent.getIntExtra("status", 0);
+        statusIncrementor = intent.getIntExtra("status", 0);
+        status += statusIncrementor;
 
         switch(status){
             case 1:
