@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void phoneNumberVerification(String phonenumber)throws IOException{
+        Context context = getApplicationContext();
+        Toast.makeText(context, "Eat a dick Ly", Toast.LENGTH_SHORT).show();
         try{
             phonenumberLong.parseLong(phonenumber,10);
         }catch (Exception e){
