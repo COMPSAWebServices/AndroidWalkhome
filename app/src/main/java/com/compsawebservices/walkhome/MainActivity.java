@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
                     Context context = getApplicationContext();
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
-                }
+                }else{
+
+
 
                 //verifying that inputted phone number could be a phone number
 
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 up = new UserProfile();
                 up.updatePhonenumber(phonenumberString);
             }
+            }
         });
     }
 
@@ -107,5 +110,5 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         }
-    
+
 }
