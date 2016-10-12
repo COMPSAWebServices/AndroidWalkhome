@@ -87,6 +87,10 @@
         <activity
             android:name=".StatusActivity"
             android:label="@string/title_activity_status"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SecurityActivity"
+            android:label="@string/title_activity_security"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

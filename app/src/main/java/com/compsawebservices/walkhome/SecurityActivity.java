@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,25 +17,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-/**
- * Created by Christian on 2016-10-11.
- */
+public class SecurityActivity extends AppCompatActivity {
 
-public class SecurityActivity extends AppCompatActivity{
+
     private TextView securityInfo;
-    private String securityInfoString = "The mandate of Campus Security and Emergency Services is to" +
-            " promote a safe and welcoming environment that recognizes and is respectful of the " +
-            "diverse nature of the Queen's Community. We will respect requests for confidentiality, " +
-            "however please note that we have an obligation to respond to situations that may " +
-            "threaten the safety of community members.The responsibility for security is shared by " +
-            "every member of the Queen's community. This web site is designed to provide you with " +
-            "the information you need to make informed decisions about your personal security. It " +
-            "also provides information to faculties, schools, departments and units so that they may" +
-            " select and implement appropriate security measures to safeguard their facilities," +
-            " staff and students.";
+    private String securityInfoString = "The mandate of Campus Security and Emergency Services is to promote a safe and welcoming environment that recognizes and is respectful of the diverse nature of the Queen's Community."+
+    "We will respect requests for confidentiality, however please note that we have an obligation to respond to situations that may threaten the safety of community members."+
+    "The responsibility for security is shared by every member of the Queen's community. This web site is designed to provide you with the information you need to make informed decisions about your personal security. It also provides information to faculties, schools, departments and units so that they may select and implement appropriate security measures to safeguard their facilities, staff and students.";
     private Button feedbackButton;
     private Button callWalkhome;
     private Button callCampusSecurity;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +37,7 @@ public class SecurityActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
 
-        getSupportActionBar().setTitle("WalkHome Information");
+        getSupportActionBar().setTitle("Security Information");
 
         //displays the back  button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -64,6 +58,7 @@ public class SecurityActivity extends AppCompatActivity{
                 startActivity(startActivityInformation);
             }
         });
+
         callWalkhome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +81,8 @@ public class SecurityActivity extends AppCompatActivity{
         callCampusSecurity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callCampusSecurity = new Intent(Intent.ACTION_DIAL);
+                Intent callCampusSecurity = new Intent(Intent
+                        .ACTION_DIAL);
                 callCampusSecurity.setData(Uri.parse("tel:9057589989"));
                 if (ActivityCompat.checkSelfPermission(SecurityActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -115,3 +111,4 @@ public class SecurityActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 }
+
