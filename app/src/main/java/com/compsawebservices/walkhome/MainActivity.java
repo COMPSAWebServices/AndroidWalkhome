@@ -52,13 +52,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 phonenumberString = phonenumber.getText().toString().replace(" ","".replace("-", ""));
-                try{
-                    phoneNumberVerification(phonenumberString);}
-                catch (Exception e){
+
+                if (!phoneNumberVerification(phonenumberString)){
                     Context context =getApplicationContext();
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
                 }
+
                 //verifying that inputted phone number could be a phone number
 
                 String parameters = "function=createUser&phone="+ phonenumberString + "&device_token="+FirebaseInstanceId.getInstance().getToken();
@@ -98,16 +98,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void phoneNumberVerification(String phonenumber)throws IOException{
-        Context context = getApplicationContext();
-        Toast.makeText(context, "Eat a dick Ly", Toast.LENGTH_SHORT).show();
+    private boolean phoneNumberVerification(String phonenumber){
         try{
             phonenumberLong.parseLong(phonenumber,10);
         }catch (Exception e){
-            throw new IOException();
+            return false;
         }
         if (phonenumber.length() != 10){
-            throw new IOException();
+            return false;
         }
+        return true;
     }
 }
