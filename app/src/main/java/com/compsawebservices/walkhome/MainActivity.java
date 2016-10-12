@@ -2,6 +2,7 @@ package com.compsawebservices.walkhome;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
 //        toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
 
         getSupportActionBar().setTitle("Walkhome");
-
+        //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x1ca7f7));
+        int a = 0;
 
         FirebaseMessaging.getInstance().subscribeToTopic("test");
         FirebaseInstanceId.getInstance().getToken();//llk
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     phoneNumberVerification(phonenumberString);}
                 catch (Exception e){
-                    Context context =getApplicationContext();
+                    Context context = getApplicationContext();
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
                 }
