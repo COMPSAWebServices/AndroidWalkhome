@@ -1,5 +1,7 @@
 package com.compsawebservices.walkhome;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,7 +20,7 @@ import android.widget.TextView;
  */
 
 public class SecurityActivity extends AppCompatActivity{
-    private TextView walkhomeInfo;
+    private TextView securityInfo;
     private String securityInfoString = "The mandate of Campus Security and Emergency Services is to" +
             " promote a safe and welcoming environment that recognizes and is respectful of the " +
             "diverse nature of the Queen's Community. We will respect requests for confidentiality, " +
@@ -48,8 +50,8 @@ public class SecurityActivity extends AppCompatActivity{
 
 
         //sets walkhome info text
-        walkhomeInfo = (TextView) findViewById(R.id.walkhome_info);
-        walkhomeInfo.setText(securityInfoString);
+        securityInfo = (TextView) findViewById(R.id.walkhome_info);
+        securityInfo.setText(securityInfoString);
 
         feedbackButton = (Button) findViewById(R.id.feedback_button);
         callWalkhome = (Button) findViewById(R.id.call_walkhome_button);
@@ -67,7 +69,7 @@ public class SecurityActivity extends AppCompatActivity{
             public void onClick(View v) {
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
                 callWalkHome.setData(Uri.parse("tel:9057589989"));
-                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -86,7 +88,7 @@ public class SecurityActivity extends AppCompatActivity{
             public void onClick(View v) {
                 Intent callCampusSecurity = new Intent(Intent.ACTION_DIAL);
                 callCampusSecurity.setData(Uri.parse("tel:9057589989"));
-                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
