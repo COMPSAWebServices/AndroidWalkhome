@@ -80,17 +80,16 @@ public class NavigationActivity extends AppCompatActivity
     private String currentAddressFrom;
     private String currentAddressTo;
 
-    private String phoneNumberTemp;
     private String phoneNumber;
     private boolean flag = false;
     private LocationRequest currentLocationRequest;
     private Marker currentLocationMarker;
 
-    private Boolean keepPhone = true;
-
     private Polyline queensBoundary;
 
     private int count=1;
+
+    static UserProfile userProfile = new UserProfile();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +105,9 @@ public class NavigationActivity extends AppCompatActivity
 
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
+//
+//        Intent intent = this.getIntent();
+        phoneNumber = userProfile.getPhonenumber();
 
         //googlemaps
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -157,8 +159,8 @@ public class NavigationActivity extends AppCompatActivity
                     sendDataToWalkhome();
 
                     /****###############################Uncomment later##################################################*/
-//                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
-//                    startActivity(startStatusIntent);
+                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
+                    startActivity(startStatusIntent);
 
                 }
             });
@@ -173,13 +175,12 @@ public class NavigationActivity extends AppCompatActivity
                     flag = false;
 
                     final Geocoder geocoder = new Geocoder(NavigationActivity.this, Locale.getDefault());
-                    /****###############################Uncomment later##################################################*/
-//                    Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+                    Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
                     Bundle setBundle = new Bundle();
                     setBundle.putDouble("currentLat", currentLat);
                     setBundle.putDouble("currentLong", currentLong);
-                    setBundle.putString("keepPhoneNumber", phoneNumber);
-                    System.out.println("SENDING: " + phoneNumber);
+                    //setBundle.putString("keepPhoneNumber", phoneNumber);
+                    //System.out.println("SENDING: " + phoneNumber);
                     try {
                         List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
                         String address = addresses.get(0).getAddressLine(0);
@@ -187,8 +188,8 @@ public class NavigationActivity extends AppCompatActivity
                     } catch(Exception e){
 
                     }
-//                    currentLocationIntent.putExtras(setBundle);
-//                    startActivity(currentLocationIntent);
+                    currentLocationIntent.putExtras(setBundle);
+                    startActivity(currentLocationIntent);
                 }
             });//end fab onClick
         }//end else
@@ -197,13 +198,9 @@ public class NavigationActivity extends AppCompatActivity
     protected void checkDirectionIntent(){
         count++;
         try {
-//            Intent intent = this.getIntent();
-//            Bundle bundle = intent.getExtras();
-//            phoneNumber = bundle.getString("phonenumber");
-
-            //gets the intent from DirectionActivity
             Intent intent = this.getIntent();
             Bundle bundle = intent.getExtras();
+//            phoneNumber = bundle.getString("phonenumber");
 
             //String intentMessage = intent.getStringExtra("currentLocation");
             latFrom = bundle.getDouble("latFrom");
@@ -213,12 +210,12 @@ public class NavigationActivity extends AppCompatActivity
             currentAddressFrom = bundle.getString("current_address_from");
             currentAddressTo = bundle.getString("current_address_to");
             flag = bundle.getBoolean("directionSent");
-            if(flag){
-                phoneNumber = bundle.getString("phoneFromDA");
-
-            }else{
-                phoneNumber = bundle.getString("phonenumber");
-            }
+//            if(flag){
+//                phoneNumber = bundle.getString("phoneFromDA");
+//
+//            }else{
+//                phoneNumber = bundle.getString("phonenumber");
+//            }
 
 
 
@@ -237,7 +234,7 @@ public class NavigationActivity extends AppCompatActivity
     public void setDirections() {
         //requires server key instead of the api key
         //https://developers.google.com/maps/documentation/directions/?hl=en_US
-        GoogleDirection.withServerKey("AIzaSyB6zeQPLFI_rltHmuLfXflGFHG6Ym6Lta0")
+        GoogleDirection.withServerKey("AIzaSyC3cDAUEiTTuulM2zsUaF8cGlTts7KEkK8")
                 .from(new LatLng(currentLat, currentLong))
                 .to(new LatLng(latTo, longTo))
                 .avoid(AvoidType.FERRIES)
@@ -627,22 +624,23 @@ public class NavigationActivity extends AppCompatActivity
         if (id == R.id.about_walkhome) {
             // Handle the camera action
             /****###############################Uncomment later##################################################*/
-//            Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
-//            startActivity(startActivityInformation);
+            Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
+            startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
-            System.out.println("phonenumber: " + phoneNumber);
-
+            //System.out.println("phonenumber: " + phoneNumber);
+            Intent startActivityinformation = new Intent(NavigationActivity.this, SecurityActivity.class);
+            startActivity(startActivityinformation);
         } else if (id == R.id.request_walk) {
             //setCurrentLocation();
             //resets the flag after user tries to request a new walk
             flag = false;
             /****###############################Uncomment later##################################################*/
-//            Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
+            Intent currentLocationIntent = new Intent(NavigationActivity.this, DirectionActivity.class);
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
             setBundle.putDouble("currentLong", currentLong);
-            setBundle.putString("keepPhoneNumber", phoneNumber);
-            System.out.println("SENDING: " + phoneNumber);
+            //setBundle.putString("keepPhoneNumber", phoneNumber);
+            //System.out.println("SENDING: " + phoneNumber);
 
             try {
                 List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
@@ -651,8 +649,8 @@ public class NavigationActivity extends AppCompatActivity
             } catch(Exception e){
 
             }
-//            currentLocationIntent.putExtras(setBundle);
-//            startActivity(currentLocationIntent);
+            currentLocationIntent.putExtras(setBundle);
+            startActivity(currentLocationIntent);
 
         }
          /*

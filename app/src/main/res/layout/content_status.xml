@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.compsawebservices.walkhome.StatusActivity"
+    tools:showIn="@layout/activity_status"
+    android:background="#1ca7f7">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
+
+
+        <TextView
+            android:id="@+id/request_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/request_sent"
+            android:textColor="#fff"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/request_received"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/request_recieved"
+            android:textColor="#818181"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"/>
+
+
+
+        <TextView
+            android:id="@+id/walker_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/walker_on_way"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#818181"/>
+        <TextView
+            android:id="@+id/walk_in_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/walk_in_progress"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#818181"/>
+        <TextView
+            android:id="@+id/walk_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/walk_completed"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#818181"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/status_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:paddingRight="30dp"
+            android:paddingLeft="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"/>
+
+    </LinearLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel Walk Request "
+        android:id="@+id/button_cancel_request"
+        android:background="#992e2e"
+        android:textColor="#fff"
+        android:layout_above="@+id/button_call_walkhome"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Call Walkhome"
+        android:id="@+id/button_call_walkhome"
+        android:background="#ebdc08"
+        android:textColor="#0a0061"
+        android:layout_above="@+id/button_feedback_form"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button_cancel_request"
+        android:layout_alignEnd="@+id/button_cancel_request"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Feedback Form"
+        android:id="@+id/button_feedback_form"
+        android:background="#0824a3"
+        android:textColor="#fff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="52dp"
+        android:layout_alignRight="@+id/button_call_walkhome"
+        android:layout_alignEnd="@+id/button_call_walkhome"
+        android:layout_marginTop="10dp"/>
+
+
+</RelativeLayout>

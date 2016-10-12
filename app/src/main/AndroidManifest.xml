@@ -48,7 +48,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,20 +57,40 @@
             </intent-filter>
         </activity>
 
-        <!-- <service android:name=".FirebaseMessagingService"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="com.google.firebase.MESSAGING_EVENT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
-        <!-- <service android:name=".FirebaseInstanceIDService"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="com.google.firebase.INSTANCE_ID_EVENT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".FirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DirectionActivity"
+            android:label="@string/title_activity_direction"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".InformationActivity"
+            android:label="@string/title_activity_information"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FeedbackActivity"
+            android:label="@string/title_activity_feedback"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".StatusActivity"
+            android:label="@string/title_activity_status"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SecurityActivity"
+            android:label="@string/title_activity_security"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
