@@ -30,6 +30,8 @@ public class StatusActivity extends AppCompatActivity {
     private Button feedbackForm;
     private int statusIncrementor;
     private int status;
+    static StatusTracker st = new StatusTracker();
+
 
 //    Firebase mRef;
 
@@ -94,15 +96,16 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
-        //get intent
+//        //get intent
         Intent intent = getIntent();
         statusIncrementor = intent.getIntExtra("status", 0);
-        status += statusIncrementor;
+        //StatusTracker st = new StatusTracker();
+        //st.updateCount();
+        status = statusIncrementor;
 
         switch(status){
             case 1:
                 reqReceived.setTextColor(Color.WHITE);
-
                 statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
                 break;
             case 2:
@@ -155,5 +158,15 @@ public class StatusActivity extends AppCompatActivity {
 //        }
 //
 //    }
+
+    @Override
+    public void onBackPressed() {
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        st.resetCount();
+    }
 
 }
