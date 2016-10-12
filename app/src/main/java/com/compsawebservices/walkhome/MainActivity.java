@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText phonenumber;
     private String phonenumberString;
     private Long phonenumberLong;
-
+    static UserProfile up;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,11 +84,14 @@ public class MainActivity extends AppCompatActivity {
 
                 }//end catch
                     Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("phonenumber", phonenumberString);
-                    loginIntent.putExtras(bundle);
-                    startActivityForResult(loginIntent, 111);
-                    finish();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("phonenumber", phonenumberString);
+//                    loginIntent.putExtras(bundle);
+//                   startActivityForResult(loginIntent, 111);
+                    startActivity(loginIntent);
+//                    finish();
+
+                up = new UserProfile(phonenumberString);
             }
         });
     }

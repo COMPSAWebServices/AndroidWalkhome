@@ -96,6 +96,13 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
+        cancelWalk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //cancels walk
+            }
+        });
+
 //        //get intent
         Intent intent = getIntent();
         statusIncrementor = intent.getIntExtra("status", 0);
@@ -125,6 +132,9 @@ public class StatusActivity extends AppCompatActivity {
                 walkProgress.setTextColor(Color.WHITE);
                 walkCompleted.setTextColor(Color.WHITE);
                 statusInfo.setText("Walk completed!");
+
+                //disables cancel walk button
+                cancelWalk.setEnabled(false);
                 Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
                 startActivity(i);
                 break;
