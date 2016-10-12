@@ -94,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void phoneNumberVerification(String phonenumber)throws IOException{
+        try{
+            phonenumberLong.parseLong(phonenumber,10);
+        }catch (Exception e){
+            throw new IOException();
+        }
         if (phonenumber.length() != 10){
             throw new IOException();
         }
