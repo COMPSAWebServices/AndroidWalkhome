@@ -50,16 +50,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 phonenumberString = phonenumber.getText().toString().replace(" ","".replace("-", ""));
-<<<<<<< HEAD
 
                 if (!phoneNumberVerification(phonenumberString)){
-                    Context context =getApplicationContext();
-=======
-                try{
-                    phoneNumberVerification(phonenumberString);}
-                catch (Exception e){
                     Context context = getApplicationContext();
->>>>>>> 69b45150ec03a50c26f8c1f79a3aba410b0a7171
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
                 }
