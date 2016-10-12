@@ -7,10 +7,19 @@ package com.compsawebservices.walkhome;
 public class UserProfile {
 
     private static String phonenumber;
-    public UserProfile(String phonenumberString){
-        this.phonenumber = phonenumberString;
-    }
+    //TODO transition from bundle to class later
+//    private static String latFrom;
+//    private static String longFrom;
+//    private static String latTo;
+//    private static String longTo;
 
+
+    public UserProfile(){    }
+
+
+    public void updatePhonenumber(String phonenumber){
+        this.phonenumber = phonenumber;
+    }
     public String getPhonenumber(){
         return phonenumber;
     }

@@ -80,17 +80,16 @@ public class NavigationActivity extends AppCompatActivity
     private String currentAddressFrom;
     private String currentAddressTo;
 
-    private String phoneNumberTemp;
     private String phoneNumber;
     private boolean flag = false;
     private LocationRequest currentLocationRequest;
     private Marker currentLocationMarker;
 
-    private Boolean keepPhone = true;
-
     private Polyline queensBoundary;
 
     private int count=1;
+
+    static UserProfile userProfile = new UserProfile();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +107,7 @@ public class NavigationActivity extends AppCompatActivity
         int duration = Toast.LENGTH_SHORT;
 //
 //        Intent intent = this.getIntent();
-//        phoneNumber = intent.getStringExtra("phonenumber");
+        phoneNumber = userProfile.getPhonenumber();
 
         //googlemaps
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -180,8 +179,8 @@ public class NavigationActivity extends AppCompatActivity
                     Bundle setBundle = new Bundle();
                     setBundle.putDouble("currentLat", currentLat);
                     setBundle.putDouble("currentLong", currentLong);
-                    setBundle.putString("keepPhoneNumber", phoneNumber);
-                    System.out.println("SENDING: " + phoneNumber);
+                    //setBundle.putString("keepPhoneNumber", phoneNumber);
+                    //System.out.println("SENDING: " + phoneNumber);
                     try {
                         List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
                         String address = addresses.get(0).getAddressLine(0);
@@ -201,11 +200,7 @@ public class NavigationActivity extends AppCompatActivity
         try {
             Intent intent = this.getIntent();
             Bundle bundle = intent.getExtras();
-            phoneNumber = bundle.getString("phonenumber");
-
-            //gets the intent from DirectionActivity
-//            Intent intent = this.getIntent();
-//            Bundle bundle = intent.getExtras();
+//            phoneNumber = bundle.getString("phonenumber");
 
             //String intentMessage = intent.getStringExtra("currentLocation");
             latFrom = bundle.getDouble("latFrom");
@@ -215,12 +210,12 @@ public class NavigationActivity extends AppCompatActivity
             currentAddressFrom = bundle.getString("current_address_from");
             currentAddressTo = bundle.getString("current_address_to");
             flag = bundle.getBoolean("directionSent");
-            if(flag){
-                phoneNumber = bundle.getString("phoneFromDA");
-
-            }else{
-                phoneNumber = bundle.getString("phonenumber");
-            }
+//            if(flag){
+//                phoneNumber = bundle.getString("phoneFromDA");
+//
+//            }else{
+//                phoneNumber = bundle.getString("phonenumber");
+//            }
 
 
 
@@ -534,7 +529,7 @@ public class NavigationActivity extends AppCompatActivity
         time = mdformat.format(calendar.getTime()) + " " + time;
 
         String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                "&drop_off_location=" + currentAddressTo + "&phone_number=9057589989" ;//+ phoneNumber;
+                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
         try{
             OkHttpClient connection = new OkHttpClient();
             Request request = new Request.Builder()
@@ -644,8 +639,8 @@ public class NavigationActivity extends AppCompatActivity
             Bundle setBundle = new Bundle();
             setBundle.putDouble("currentLat", currentLat);
             setBundle.putDouble("currentLong", currentLong);
-            setBundle.putString("keepPhoneNumber", phoneNumber);
-            System.out.println("SENDING: " + phoneNumber);
+            //setBundle.putString("keepPhoneNumber", phoneNumber);
+            //System.out.println("SENDING: " + phoneNumber);
 
             try {
                 List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);

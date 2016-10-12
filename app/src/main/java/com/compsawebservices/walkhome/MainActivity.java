@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(loginIntent);
 //                    finish();
 
-                up = new UserProfile(phonenumberString);
+                up = new UserProfile();
+                up.updatePhonenumber(phonenumberString);
             }
         });
     }

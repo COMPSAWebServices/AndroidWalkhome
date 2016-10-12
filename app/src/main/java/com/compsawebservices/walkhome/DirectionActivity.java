@@ -176,6 +176,8 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     bundle.putDouble("longTo", longTo);
                     bundle.putString("page", "directionAct");
 
+
+
                     try {
                         List<Address> addressesFrom = geocoder.getFromLocation(currentLat, currentLong, 1);
                         String addressFrom = addressesFrom.get(0).getAddressLine(0);
