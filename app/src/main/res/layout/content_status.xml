@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".StatusActivity"
+    tools:context="com.compsawebservices.walkhome.StatusActivity"
     tools:showIn="@layout/activity_status"
     android:background="#1ca7f7">
 
@@ -20,22 +20,26 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/request_received"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/request_recieved"
-            android:textColor="#fff"
-            android:textSize="20dp"/>
 
         <TextView
             android:id="@+id/request_sent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/request_sent"
+            android:textColor="#fff"
+            android:layout_marginTop="10dp"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/request_received"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/request_recieved"
             android:textColor="#818181"
             android:layout_marginTop="10dp"
             android:textSize="20dp"/>
+
+
 
         <TextView
             android:id="@+id/walker_out"
@@ -75,14 +79,13 @@
             android:id="@+id/status_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your request has been received. The next available walking team will be heading your way"
             android:textSize="20dp"
             android:textColor="#fff"
             android:gravity="center"
             android:paddingRight="30dp"
             android:paddingLeft="30dp"
-            android:layout_marginTop="30dp"/>
-
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"/>
 
     </LinearLayout>
 

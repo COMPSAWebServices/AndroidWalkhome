@@ -29,7 +29,19 @@ public class StatusActivity extends AppCompatActivity {
     private Button callWalkhome;
     private Button feedbackForm;
 
+    private int status;
+
 //    Firebase mRef;
+
+//    public StatusActivity(){
+//        this.status = 0;
+//        this.reqSent = (TextView)findViewById(R.id.request_received);
+//        this.reqReceived = (TextView)findViewById(R.id.request_sent);
+//        this.walkerOut = (TextView)findViewById(R.id.walker_out);
+//        this.walkProgress = (TextView)findViewById(R.id.walk_in_progress);
+//        this.walkCompleted = (TextView)findViewById(R.id.walk_completed);
+//        this.statusInfo = (TextView)findViewById(R.id.status_info);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +54,8 @@ public class StatusActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Status");
 
-        reqSent = (TextView)findViewById(R.id.request_received);
-        reqReceived = (TextView)findViewById(R.id.request_sent);
+        reqSent = (TextView)findViewById(R.id.request_sent);
+        reqReceived = (TextView)findViewById(R.id.request_received);
         walkerOut = (TextView)findViewById(R.id.walker_out);
         walkProgress = (TextView)findViewById(R.id.walk_in_progress);
         walkCompleted = (TextView)findViewById(R.id.walk_completed);
@@ -82,28 +94,65 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
-        //getting changes
-//        mRef = new Firebase("https://walkhome-68dbb.firebaseio.com");
-//
-//        mRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                //data changes
-//                String data = dataSnapshot.getValue(String.class);
-//                statusInfo.setText(data);
-//            }
-//
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//
-//            }
-//        });
+        //get intent
+        Intent intent = getIntent();
+        status = intent.getIntExtra("status", 0);
+
+        switch(status){
+            case 1:
+                reqReceived.setTextColor(Color.WHITE);
+
+                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
+                break;
+            case 2:
+                reqReceived.setTextColor(Color.WHITE);
+                walkerOut.setTextColor(Color.WHITE);
+                statusInfo.setText("Walkers are currently on their way!");
+                break;
+            case 3:
+                reqReceived.setTextColor(Color.WHITE);
+                walkerOut.setTextColor(Color.WHITE);
+                walkProgress.setTextColor(Color.WHITE);
+                statusInfo.setText("Walk in progress...");
+                break;
+            case 4:
+                reqReceived.setTextColor(Color.WHITE);
+                walkerOut.setTextColor(Color.WHITE);
+                walkProgress.setTextColor(Color.WHITE);
+                walkCompleted.setTextColor(Color.WHITE);
+                statusInfo.setText("Walk completed!");
+                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
+                startActivity(i);
+                break;
+
+        }
+
+        //cancelWalk
+
 
     }//end on create
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        x
-//    }//end onStart()
+//    public void updateStatus(){
+//        status++;
+//
+//        switch(status){
+//            case 1:
+//                reqReceived.setTextColor(Color.WHITE);
+//                break;
+//            case 2:
+//                walkerOut.setTextColor(Color.WHITE);
+//                break;
+//            case 3:
+//                walkProgress.setTextColor(Color.WHITE);
+//                break;
+//            case 4:
+//                walkCompleted.setTextColor(Color.WHITE);
+//                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
+//                startActivity(i);
+//                break;
+//
+//        }
+//
+//    }
+
 }

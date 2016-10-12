@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.MainThread;
 import android.support.v4.app.NotificationCompat;
+import android.widget.TextView;
 
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -17,11 +18,22 @@ import com.google.firebase.messaging.RemoteMessage;
  */
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
+    private static int status = 0;
 
+//    StatusActivity statusActivity = new StatusActivity();
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
+
         sendNotification(remoteMessage.getNotification().getBody());
+        status++;
+//        statusActivity.updateStatus();
+
+        System.out.println("STATUSssssssssssssssssssss: " + status);
+        Intent intent = new Intent(this, StatusActivity.class);
+        intent.putExtra("status", status);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void sendNotification(String messageBody) {
