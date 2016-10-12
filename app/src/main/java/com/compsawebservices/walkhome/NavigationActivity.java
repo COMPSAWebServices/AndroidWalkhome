@@ -632,8 +632,9 @@ public class NavigationActivity extends AppCompatActivity
             Intent startActivityInformation = new Intent(NavigationActivity.this, InformationActivity.class);
             startActivity(startActivityInformation);
         } else if (id == R.id.about_campus_security) {
-            System.out.println("phonenumber: " + phoneNumber);
-
+            //System.out.println("phonenumber: " + phoneNumber);
+            Intent startActivityinformation = new Intent(NavigationActivity.this, SecurityActivity.class);
+            startActivity(startActivityinformation);
         } else if (id == R.id.request_walk) {
             //setCurrentLocation();
             //resets the flag after user tries to request a new walk
