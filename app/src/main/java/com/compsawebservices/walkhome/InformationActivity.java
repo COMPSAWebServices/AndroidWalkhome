@@ -61,7 +61,7 @@ public class InformationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
-                callWalkHome.setData(Uri.parse("tel:9057589989"));
+                callWalkHome.setData(Uri.parse("tel:6135339255"));
                 if (ActivityCompat.checkSelfPermission(InformationActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -80,7 +80,7 @@ public class InformationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent callCampusSecurity = new Intent(Intent.ACTION_DIAL);
-                callCampusSecurity.setData(Uri.parse("tel:9057589989"));
+                callCampusSecurity.setData(Uri.parse("tel:6135536111"));
                 if (ActivityCompat.checkSelfPermission(InformationActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions

@@ -12,6 +12,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 //import com.firebase.client.DataSnapshot;
 //import com.firebase.client.Firebase;
 //import com.firebase.client.FirebaseError;
@@ -31,6 +45,8 @@ public class StatusActivity extends AppCompatActivity {
     private int statusIncrementor;
     private int status;
     static StatusTracker st = new StatusTracker();
+    static UserProfile userProfile = new UserProfile();
+    private String walkID;
 
 
 //    Firebase mRef;
@@ -72,7 +88,7 @@ public class StatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
-                callWalkHome.setData(Uri.parse("tel:9057589989"));
+                callWalkHome.setData(Uri.parse("tel:6135339255"));
                 if (ActivityCompat.checkSelfPermission(StatusActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -100,10 +116,81 @@ public class StatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //cancels walk
-            }
-        });
+                String parameters = "function=getWalkByUserPhoneNumber&phone_number="+ userProfile.getPhonenumber();
+                try{
+                    OkHttpClient connection = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
+                            //.post(body)
+                            .build();
 
-//        //get intent
+                    connection.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Request request, IOException e) {
+                            System.out.println("CONNECTION RESPONSE: FAILED");
+                        }
+
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            String jsonData = response.body().string();
+
+                            try {
+                                JSONObject obj = new JSONObject(jsonData);
+                                walkID = obj.getJSONObject("walk").getString("id");
+//                                JSONArray walkIDJson = (JSONArray) obj.get("walk");
+//                                ArrayList<String> list = new ArrayList<String>();
+//                                for(int i=0; i<walkIDJson.length(); i++){
+//                                    list.add(walkIDJson.getJSONObject(i).getString("name"));
+//                                }
+//
+//                                System.out.println("ARRAYLIST" + list);
+//                                System.out.println("JSONARRAY" + walkIDJson);
+                                System.out.println("CONNECTION RESPONSE: SUCCESS ID" +walkID);
+
+                                //call cancel walk function here
+                                String parameters2 = "function=cancelWalk&id="+ walkID;
+                                try{
+                                    OkHttpClient connection = new OkHttpClient();
+                                    final Request request = new Request.Builder()
+                                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                                            //.post(body)
+                                            .build();
+
+                                    connection.newCall(request).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Request request, IOException e) {
+                                            System.out.println("CONNECTION RESPONSE: FAILED");
+                                        }
+
+                                        @Override
+                                        public void onResponse(Response response) throws IOException {
+                                            System.out.println("CONNECTION RESPONSE: WALK DELETED" + response);
+                                        }
+                                    });
+                                } catch (Exception error){
+
+                                }//end cancelwalk catch
+
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
+
+                            //redirect back to navigation
+                            Intent intent = new Intent(StatusActivity.this, NavigationActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                } catch (Exception error){
+
+                }
+            }//end onCLICK
+        });//end cancelwalk
+
+        //get intent
         Intent intent = getIntent();
         statusIncrementor = intent.getIntExtra("status", 0);
         //StatusTracker st = new StatusTracker();
@@ -146,28 +233,6 @@ public class StatusActivity extends AppCompatActivity {
 
     }//end on create
 
-//    public void updateStatus(){
-//        status++;
-//
-//        switch(status){
-//            case 1:
-//                reqReceived.setTextColor(Color.WHITE);
-//                break;
-//            case 2:
-//                walkerOut.setTextColor(Color.WHITE);
-//                break;
-//            case 3:
-//                walkProgress.setTextColor(Color.WHITE);
-//                break;
-//            case 4:
-//                walkCompleted.setTextColor(Color.WHITE);
-//                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
-//                startActivity(i);
-//                break;
-//
-//        }
-//
-//    }
 
     @Override
     public void onBackPressed() {
