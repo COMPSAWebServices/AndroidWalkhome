@@ -19,7 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
     private int status = 1;
-
+    static StatusTracker st = new StatusTracker();
 //    StatusActivity statusActivity = new StatusActivity();
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -28,9 +28,11 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         sendNotification(remoteMessage.getNotification().getBody());
 //        statusActivity.updateStatus();
 
-        System.out.println("STATUSssssssssssssssssssss: " + status);
+
+        st.updateCount();
+        System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);
-        intent.putExtra("status", status);
+        intent.putExtra("status", st.getCount());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
