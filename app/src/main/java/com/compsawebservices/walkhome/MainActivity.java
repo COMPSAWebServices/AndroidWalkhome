@@ -35,12 +35,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
 
         getSupportActionBar().setTitle("Walkhome");
-        //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x1ca7f7));
         int a = 0;
 
         FirebaseMessaging.getInstance().subscribeToTopic("test");
