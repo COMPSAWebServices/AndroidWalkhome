@@ -37,4 +37,5 @@
     <string name="walker_on_way">Walks on their way</string>
     <string name="walk_in_progress">Walk in progress</string>
     <string name="walk_completed">Walk completed</string>
+    <string name="title_activity_security">SecurityActivity</string>
 </resources>
