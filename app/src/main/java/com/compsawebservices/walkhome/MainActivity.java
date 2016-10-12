@@ -2,6 +2,7 @@ package com.compsawebservices.walkhome;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -34,12 +35,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
 
         getSupportActionBar().setTitle("Walkhome");
-
+        int a = 0;
 
         FirebaseMessaging.getInstance().subscribeToTopic("test");
         FirebaseInstanceId.getInstance().getToken();//llk
@@ -52,9 +50,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 phonenumberString = phonenumber.getText().toString().replace(" ","".replace("-", ""));
+<<<<<<< HEAD
 
                 if (!phoneNumberVerification(phonenumberString)){
                     Context context =getApplicationContext();
+=======
+                try{
+                    phoneNumberVerification(phonenumberString);}
+                catch (Exception e){
+                    Context context = getApplicationContext();
+>>>>>>> 69b45150ec03a50c26f8c1f79a3aba410b0a7171
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
                 }
@@ -91,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(loginIntent);
 //                    finish();
 
-                up = new UserProfile(phonenumberString);
+                up = new UserProfile();
+                up.updatePhonenumber(phonenumberString);
             }
         });
     }
