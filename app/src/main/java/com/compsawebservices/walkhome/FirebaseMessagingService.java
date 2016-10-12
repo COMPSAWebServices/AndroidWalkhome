@@ -25,11 +25,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
 
-        sendNotification(remoteMessage.getNotification().getBody());
+
 //        statusActivity.updateStatus();
 
 
         st.updateCount();
+        sendNotification(remoteMessage.getNotification().getBody());
         System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);
         intent.putExtra("status", st.getCount());
@@ -39,14 +40,15 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, StatusActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("status", st.getCount());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.walkhomelogo2)
-                .setContentTitle("FCM Message")
+                .setContentTitle("Walkhome")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

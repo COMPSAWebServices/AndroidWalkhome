@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +51,11 @@ public class SecurityActivity extends AppCompatActivity {
         feedbackButton = (Button) findViewById(R.id.feedback_button);
         callWalkhome = (Button) findViewById(R.id.call_walkhome_button);
         callCampusSecurity = (Button) findViewById(R.id.call_campussecurity_button);
+
+        //make securityInfo scrollable
+        securityInfo.setMovementMethod(new ScrollingMovementMethod());
+
+
 
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
