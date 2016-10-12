@@ -1,16 +1,38 @@
 package com.compsawebservices.walkhome;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.compsawebservices.walkhome.R;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class FeedbackActivity extends AppCompatActivity {
+
+    private EditText feedbackText;
+    private String userFeedback;
+    static UserProfile userProfile = new UserProfile();
+    private Toast toast;
+    private Button submit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +49,6 @@ public class FeedbackActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
         ToggleButton Btn= new ToggleButton(this);// or get it from the layout by ToggleButton Btn=(ToggleButton) findViewById(R.id.IDofButton);
         Btn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -47,6 +59,56 @@ public class FeedbackActivity extends AppCompatActivity {
                 else buttonView.setBackgroundColor(Color.RED);
             }
         });
+
+        feedbackText = (EditText)findViewById(R.id.feedback_editText);
+        userFeedback = feedbackText.getText().toString();
+        //gets the current time
+
+
+        submit = (Button)findViewById(R.id.submit_feedback) ;
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                String time = sdf.format(calendar.getTime());
+
+                SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd");
+                time = mdformat.format(calendar.getTime()) + " " + time;
+                String parameters = "function=feedback&message="+ userFeedback + "&phone_number="+ userProfile.getPhonenumber() + "&time=" + time;
+                try{
+                    OkHttpClient connection = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
+                            //.post(body)
+                            .build();
+
+                    connection.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Request request, IOException e) {
+                            System.out.println("CONNECTION RESPONSE: FAILED");
+                        }
+
+                        @Override
+                        public void onResponse(Response response) throws IOException {
+                            System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
+                            Intent intent = new Intent(FeedbackActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            Context context = getApplicationContext();
+                            int duration = Toast.LENGTH_LONG;
+//                            toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
+//                            toast.show();
+                        }
+                    });
+                } catch (Exception error){
+
+                }//end catch
+            }
+        });
+
+
+
+
     }//end onCreate
 
     @Override
