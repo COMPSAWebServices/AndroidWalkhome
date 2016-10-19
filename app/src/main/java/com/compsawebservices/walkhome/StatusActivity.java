@@ -177,7 +177,7 @@ public class StatusActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
+//                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
 
                             //redirect back to navigation
                             Intent intent = new Intent(StatusActivity.this, NavigationActivity.class);
@@ -187,6 +187,8 @@ public class StatusActivity extends AppCompatActivity {
                 } catch (Exception error){
 
                 }
+                //resets the counter
+                st.resetCount();
             }//end onCLICK
         });//end cancelwalk
 
@@ -195,7 +197,8 @@ public class StatusActivity extends AppCompatActivity {
         statusIncrementor = intent.getIntExtra("status", 0);
         //StatusTracker st = new StatusTracker();
         //st.updateCount();
-        status = statusIncrementor;
+//        status = statusIncrementor;
+        status = st.getCount();
 
         switch(status){
             case 1:

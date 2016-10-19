@@ -1,6 +1,7 @@
 package com.compsawebservices.walkhome;
 
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -30,12 +31,25 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
 
         st.updateCount();
-        sendNotification(remoteMessage.getNotification().getBody());
+
         System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);
         intent.putExtra("status", st.getCount());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        sendNotification(remoteMessage.getNotification().getBody());
+
+//        Intent intent2 = ((Activity) getApplicationContext()).getIntent();
+//        if(intent2.getExtras()!= null){
+//            //do your stuff
+//            startActivity(intent);
+//            sendNotification(remoteMessage.getNotification().getBody());
+//        }else{
+//            //do that you normally do
+//            startActivity(intent);
+//
+//        }
+
     }
 
     private void sendNotification(String messageBody) {
@@ -57,4 +71,5 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
 }

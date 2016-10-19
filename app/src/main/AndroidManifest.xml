@@ -55,7 +55,12 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="OPEN_ACTIVITY_1" />-->
+                <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <service android:name=".FirebaseMessagingService">
@@ -88,7 +93,12 @@
         <activity
             android:name=".StatusActivity"
             android:label="@string/title_activity_status"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="OPEN_ACTIVITY_1" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SecurityActivity"
             android:label="@string/title_activity_security"
