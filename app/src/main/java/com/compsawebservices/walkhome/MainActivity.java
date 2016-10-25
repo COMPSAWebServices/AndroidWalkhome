@@ -22,6 +22,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private String phonenumberString;
     private Long phonenumberLong;
     static UserProfile up;
+    private String walkStatus;
+    static StatusTracker st = new StatusTracker();
+    private String active;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,16 +89,83 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception error){
 
                 }//end catch
-                    Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("phonenumber", phonenumberString);
-//                    loginIntent.putExtras(bundle);
-//                   startActivityForResult(loginIntent, 111);
-                    startActivity(loginIntent);
-//                    finish();
 
-                up = new UserProfile();
-                up.updatePhonenumber(phonenumberString);
+                    //checks if there is a walk
+                    String parameters2 = "function=getWalkByUserPhoneNumber&phone_number="+ phonenumberString;
+                    try{
+                        OkHttpClient connection = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                                //.post(body)
+                                .build();
+
+                        connection.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Request request, IOException e) {
+                                System.out.println("CONNECTION RESPONSE: FAILED");
+                            }
+
+                            @Override
+                            public void onResponse(Response response) throws IOException {
+                                String jsonData = response.body().string();
+
+                                try {
+                                    JSONObject obj = new JSONObject(jsonData);
+                                    walkStatus = obj.getJSONObject("walk").getString("status");
+                                    active = obj.getJSONObject("walk").getString("active");
+
+                                    //only do this if there is an active walk
+                                    if(active.equals("1")){
+                                        System.out.println("CONNECTION RESPONSE: SUCCESS ID: " + walkStatus);
+                                        System.out.println("CONNECTION RESPONSE: SUCCESS ACTIVE: " + active);
+                                        int status = Integer.parseInt(walkStatus);
+                                        System.out.println("CONNECTIONNNNNNNNNNNNNNNNNNNNNNNNN: " + status);
+                                        //redirect back to navigation
+                                        //minus 1 because when StatusActivity calls st.getCount() it adds one to it.
+                                        st.updateStatus(status);
+                                        Intent intent = new Intent(MainActivity.this, StatusActivity.class);
+                                        startActivity(intent);
+                                    }
+//                                    else{
+//                                        Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
+//
+//                                        up = new UserProfile();
+//                                        up.updatePhonenumber(phonenumberString);
+//                                        startActivity(loginIntent);
+//                                    }
+
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+//                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
+
+
+                            }
+                        });
+                    } catch (Exception error){
+
+                    }
+//
+//
+//                 Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
+////                    Bundle bundle = new Bundle();
+////                    bundle.putString("phonenumber", phonenumberString);
+////                    loginIntent.putExtras(bundle);
+////                   startActivityForResult(loginIntent, 111);
+//                    startActivity(loginIntent);
+////                    finish();
+//
+//                up = new UserProfile();
+//                up.updatePhonenumber(phonenumberString);
+
+                    if(active==null){
+                        Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
+                        up = new UserProfile();
+                        up.updatePhonenumber(phonenumberString);
+                        startActivity(loginIntent);
+                    }
             }
             }
         });

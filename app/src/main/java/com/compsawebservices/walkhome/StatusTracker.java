@@ -6,10 +6,17 @@ package com.compsawebservices.walkhome;
 
 public class StatusTracker {
 
-    private static int statusCount;
+    private static int statusCount = 1 ;
 
     public StatusTracker(){
-        this.statusCount = 0;
+        if (statusCount==1){
+            this.statusCount = 1;
+        }
+
+    }
+
+    public void updateStatus(int status){
+        this.statusCount = status;
     }
 
     public void updateCount(){

@@ -13,6 +13,15 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.TextView;
 
 import com.google.firebase.messaging.RemoteMessage;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by Ly on 2016-10-05.
@@ -21,6 +30,10 @@ import com.google.firebase.messaging.RemoteMessage;
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
     private int status = 1;
     static StatusTracker st = new StatusTracker();
+    static UserProfile userProfile = new UserProfile();
+    private String walkID;
+    private String walkStatus;
+
 //    StatusActivity statusActivity = new StatusActivity();
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -30,7 +43,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 //        statusActivity.updateStatus();
 
 
-        st.updateCount();
+
 
         System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);

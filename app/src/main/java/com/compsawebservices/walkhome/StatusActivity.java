@@ -47,6 +47,7 @@ public class StatusActivity extends AppCompatActivity {
     static StatusTracker st = new StatusTracker();
     static UserProfile userProfile = new UserProfile();
     private String walkID;
+    private String walkStatus;
 
 
 //    Firebase mRef;
@@ -72,6 +73,12 @@ public class StatusActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Status");
 
+//        reqSent = (TextView)findViewById(R.id.request_sent);
+//        reqReceived = (TextView)findViewById(R.id.request_received);
+//        walkerOut = (TextView)findViewById(R.id.walker_out);
+//        walkProgress = (TextView)findViewById(R.id.walk_in_progress);
+//        walkCompleted = (TextView)findViewById(R.id.walk_completed);
+//        statusInfo = (TextView)findViewById(R.id.status_info);
         reqSent = (TextView)findViewById(R.id.request_sent);
         reqReceived = (TextView)findViewById(R.id.request_received);
         walkerOut = (TextView)findViewById(R.id.walker_out);
@@ -192,46 +199,109 @@ public class StatusActivity extends AppCompatActivity {
             }//end onCLICK
         });//end cancelwalk
 
-        //get intent
-        Intent intent = getIntent();
-        statusIncrementor = intent.getIntExtra("status", 0);
-        //StatusTracker st = new StatusTracker();
-        //st.updateCount();
-//        status = statusIncrementor;
+        //st = new StatusTracker();
         status = st.getCount();
+        System.out.println("STAAAAAAAAAAATUS IN STATUS ACTIVITY: " + status);
 
-        switch(status){
-            case 1:
-                reqReceived.setTextColor(Color.WHITE);
-                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
-                break;
-            case 2:
-                reqReceived.setTextColor(Color.WHITE);
-                walkerOut.setTextColor(Color.WHITE);
-                statusInfo.setText("Walkers are currently on their way!");
-                break;
-            case 3:
-                reqReceived.setTextColor(Color.WHITE);
-                walkerOut.setTextColor(Color.WHITE);
-                walkProgress.setTextColor(Color.WHITE);
-                statusInfo.setText("Walk in progress...");
-                break;
-            case 4:
-                reqReceived.setTextColor(Color.WHITE);
-                walkerOut.setTextColor(Color.WHITE);
-                walkProgress.setTextColor(Color.WHITE);
-                walkCompleted.setTextColor(Color.WHITE);
-                statusInfo.setText("Walk completed!");
+        //checks if there is a walk
+        String parameters2 = "function=getWalkByUserPhoneNumber&phone_number="+ userProfile.getPhonenumber();
+        try{
+            OkHttpClient connection = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                    //.post(body)
+                    .build();
 
-                //disables cancel walk button
-                cancelWalk.setEnabled(false);
-                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
-                startActivity(i);
-                break;
+            connection.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    System.out.println("CONNECTION RESPONSE: FAILED");
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    String jsonData = response.body().string();
+
+                    try {
+                        JSONObject obj = new JSONObject(jsonData);
+                        walkStatus = obj.getJSONObject("walk").getString("status");
+                        status = Integer.parseInt(walkStatus);
+                        System.out.println("STATTTTTTTTTTTTTTUSSSSSSSSSSSS IN STATUSACT: " + status);
+                        switch(status){
+                            case 1:
+                                reqReceived = (TextView)findViewById(R.id.request_received);
+                                reqReceived.setTextColor(Color.WHITE);
+                                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
+                                break;
+                            case 2:
+                                reqReceived = (TextView)findViewById(R.id.request_received);
+                                reqReceived.setTextColor(Color.WHITE);
+                                walkerOut.setTextColor(Color.WHITE);
+                                statusInfo.setText("Walkers are currently on their way!");
+                                break;
+                            case 3:
+                                reqReceived = (TextView)findViewById(R.id.request_received);
+                                reqReceived.setTextColor(Color.WHITE);
+                                walkerOut.setTextColor(Color.WHITE);
+                                walkProgress.setTextColor(Color.WHITE);
+                                statusInfo.setText("Walk in progress...");
+                                break;
+                            case 4:
+                                reqReceived = (TextView)findViewById(R.id.request_received);
+                                reqReceived.setTextColor(Color.WHITE);
+                                walkerOut.setTextColor(Color.WHITE);
+                                walkProgress.setTextColor(Color.WHITE);
+                                walkCompleted.setTextColor(Color.WHITE);
+                                statusInfo.setText("Walk completed!");
+
+                                //disables cancel walk button
+                                //cancelWalk.setEnabled(false);
+                                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
+                                startActivity(i);
+                                break;
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception error){
 
         }
 
-        //cancelWalk
+//        switch(status){
+//            case 1:
+//                reqReceived.setTextColor(Color.WHITE);
+//                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
+//                break;
+//            case 2:
+//                reqReceived.setTextColor(Color.WHITE);
+//                walkerOut.setTextColor(Color.WHITE);
+//                statusInfo.setText("Walkers are currently on their way!");
+//                break;
+//            case 3:
+//                reqReceived.setTextColor(Color.WHITE);
+//                walkerOut.setTextColor(Color.WHITE);
+//                walkProgress.setTextColor(Color.WHITE);
+//                statusInfo.setText("Walk in progress...");
+//                break;
+//            case 4:
+//                reqReceived.setTextColor(Color.WHITE);
+//                walkerOut.setTextColor(Color.WHITE);
+//                walkProgress.setTextColor(Color.WHITE);
+//                walkCompleted.setTextColor(Color.WHITE);
+//                statusInfo.setText("Walk completed!");
+//
+//                //disables cancel walk button
+//                //cancelWalk.setEnabled(false);
+//                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
+//                startActivity(i);
+//                break;
+//
+//        }
 
 
     }//end on create
