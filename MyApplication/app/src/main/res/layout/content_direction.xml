@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.compsawebservices.Walkhome.DirectionActivity"
+    tools:showIn="@layout/activity_direction"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+  
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        >
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_from"
+            android:layout_width="309dp"
+            android:layout_height="55dp"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="#fff"
+            />
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_to"
+            android:layout_width="309dp"
+            android:layout_height="55dp"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_below="@+id/place_autocomplete_fragment_from"
+            android:layout_marginTop="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="#fff"/>
+
+
+
+    </RelativeLayout>
+    <View
+        android:id="@+id/line_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_below="@+id/place_autocomplete_fragment_to"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.42">
+    <Button
+        android:id="@+id/request_button"
+        android:layout_width="131dp"
+        android:layout_height="wrap_content"
+        android:text="See Direction"
+        android:textColor="#fff"
+        android:background="#1328c4"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignTop="@+id/direction_act_info"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
+
+    <Button
+        android:id="@+id/direction_act_info"
+        android:layout_width="93dp"
+        android:layout_height="wrap_content"
+        android:text="Info"
+        android:background="#ebdc08"
+        android:layout_marginTop="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/request_button"
+        android:layout_toStartOf="@+id/request_button" />
+
+        <Button
+            android:id="@+id/direction_act_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#ebdc08"
+            android:text="Call"
+            android:layout_alignTop="@+id/request_button"
+            android:layout_toRightOf="@+id/request_button"
+            android:layout_toEndOf="@+id/request_button" />
+
+    </RelativeLayout>
+
+</LinearLayout>
