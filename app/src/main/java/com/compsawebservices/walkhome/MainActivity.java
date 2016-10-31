@@ -126,39 +126,20 @@ public class MainActivity extends AppCompatActivity {
                                         Intent intent = new Intent(MainActivity.this, StatusActivity.class);
                                         startActivity(intent);
                                     }
-//                                    else{
-//                                        Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
-//
-//                                        up = new UserProfile();
-//                                        up.updatePhonenumber(phonenumberString);
-//                                        startActivity(loginIntent);
-//                                    }
+
 
 
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-//                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
-
 
                             }
                         });
                     } catch (Exception error){
 
                     }
-//
-//
-//                 Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
-////                    Bundle bundle = new Bundle();
-////                    bundle.putString("phonenumber", phonenumberString);
-////                    loginIntent.putExtras(bundle);
-////                   startActivityForResult(loginIntent, 111);
-//                    startActivity(loginIntent);
-////                    finish();
-//
-//                up = new UserProfile();
-//                up.updatePhonenumber(phonenumberString);
+
 
                     if(active==null){
                         Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);

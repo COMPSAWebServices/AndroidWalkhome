@@ -2,6 +2,7 @@ package com.compsawebservices.walkhome;
 
 /**
  * Created by Ly on 2016-10-11.
+ * Contains the phonenumber of the user
  */
 
 public class UserProfile {

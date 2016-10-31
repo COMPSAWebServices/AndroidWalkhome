@@ -38,31 +38,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-
-
-//        statusActivity.updateStatus();
-
-
-
-
         System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);
         intent.putExtra("status", st.getCount());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         sendNotification(remoteMessage.getNotification().getBody());
-
-//        Intent intent2 = ((Activity) getApplicationContext()).getIntent();
-//        if(intent2.getExtras()!= null){
-//            //do your stuff
-//            startActivity(intent);
-//            sendNotification(remoteMessage.getNotification().getBody());
-//        }else{
-//            //do that you normally do
-//            startActivity(intent);
-//
-//        }
-
     }
 
     private void sendNotification(String messageBody) {

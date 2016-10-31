@@ -281,43 +281,6 @@ public class NavigationActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*
-        // Location currently set in Newmarket, ON
-        //LatLng queens = new LatLng(44.053607, -79.458481);
-        LatLng queens = new LatLng(currentLat, currentLong);
-        //adds the marker description
-        mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions().position(queens).title("Marker at Queen's"));
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        //when clicked move camera to user's current location
-
-
-
-
-        //adds the specify location and zoom in by 17
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(queens, 15));
-
-        //adds a circle radius around the specifiy location
-        circle = mMap.addCircle(new CircleOptions()
-                .center(queens)
-                .radius(1000)
-                .strokeWidth(10)
-                .strokeColor(Color.GREEN)
-                .fillColor(0x5500ff00)
-                .clickable(true));
-
-            */
-
         buildGoogleApiClient();
         mGoogleApiClient.connect();
     }//end on mapready
@@ -552,32 +515,6 @@ public class NavigationActivity extends AppCompatActivity
 
         }//end catch
 
-//
-//        //TODO Need to create the user function
-//        try{
-//            String android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-//                    Settings.Secure.ANDROID_ID);
-//
-//            System.out.println("ANdoir IDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + android_id);
-//
-//
-//            OkHttpClient connectionCreateUser = new OkHttpClient();
-//            Request request = new Request.Builder()
-//                    .url("http://dev.compsawebservices.com/walkhome/api.php?"+"function=createUser&phone="+phoneNumber+"&device_token="+android_id)
-//                    //.post(body)
-//                    .build();
-//            connectionCreateUser.newCall(request).enqueue(new Callback() {
-//                @Override
-//                public void onFailure(Request request, IOException e) {
-//                    System.out.println("CONNECTION RESPONSE: FAILED");
-//                }
-//
-//                @Override
-//                public void onResponse(Response response) throws IOException {
-//                    System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
-//                }
-//            });
-//        }catch (Exception e){}
     }
 
     /***********************************************NAVIGATION DRAWER**************************************************************/
@@ -653,15 +590,6 @@ public class NavigationActivity extends AppCompatActivity
             startActivity(currentLocationIntent);
 
         }
-         /*
-        else if (id == R.id.nav_manage) {
-
-        }
-        else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -26,10 +26,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-//import com.firebase.client.DataSnapshot;
-//import com.firebase.client.Firebase;
-//import com.firebase.client.FirebaseError;
-//import com.firebase.client.ValueEventListener;
+
 
 public class StatusActivity extends AppCompatActivity {
     private TextView reqSent;
@@ -49,19 +46,6 @@ public class StatusActivity extends AppCompatActivity {
     private String walkID;
     private String walkStatus;
 
-
-//    Firebase mRef;
-
-//    public StatusActivity(){
-//        this.status = 0;
-//        this.reqSent = (TextView)findViewById(R.id.request_received);
-//        this.reqReceived = (TextView)findViewById(R.id.request_sent);
-//        this.walkerOut = (TextView)findViewById(R.id.walker_out);
-//        this.walkProgress = (TextView)findViewById(R.id.walk_in_progress);
-//        this.walkCompleted = (TextView)findViewById(R.id.walk_completed);
-//        this.statusInfo = (TextView)findViewById(R.id.status_info);
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,12 +57,6 @@ public class StatusActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Status");
 
-//        reqSent = (TextView)findViewById(R.id.request_sent);
-//        reqReceived = (TextView)findViewById(R.id.request_received);
-//        walkerOut = (TextView)findViewById(R.id.walker_out);
-//        walkProgress = (TextView)findViewById(R.id.walk_in_progress);
-//        walkCompleted = (TextView)findViewById(R.id.walk_completed);
-//        statusInfo = (TextView)findViewById(R.id.status_info);
         reqSent = (TextView)findViewById(R.id.request_sent);
         reqReceived = (TextView)findViewById(R.id.request_received);
         walkerOut = (TextView)findViewById(R.id.walker_out);
@@ -271,38 +249,6 @@ public class StatusActivity extends AppCompatActivity {
         } catch (Exception error){
 
         }
-
-//        switch(status){
-//            case 1:
-//                reqReceived.setTextColor(Color.WHITE);
-//                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
-//                break;
-//            case 2:
-//                reqReceived.setTextColor(Color.WHITE);
-//                walkerOut.setTextColor(Color.WHITE);
-//                statusInfo.setText("Walkers are currently on their way!");
-//                break;
-//            case 3:
-//                reqReceived.setTextColor(Color.WHITE);
-//                walkerOut.setTextColor(Color.WHITE);
-//                walkProgress.setTextColor(Color.WHITE);
-//                statusInfo.setText("Walk in progress...");
-//                break;
-//            case 4:
-//                reqReceived.setTextColor(Color.WHITE);
-//                walkerOut.setTextColor(Color.WHITE);
-//                walkProgress.setTextColor(Color.WHITE);
-//                walkCompleted.setTextColor(Color.WHITE);
-//                statusInfo.setText("Walk completed!");
-//
-//                //disables cancel walk button
-//                //cancelWalk.setEnabled(false);
-//                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
-//                startActivity(i);
-//                break;
-//
-//        }
-
 
     }//end on create
 

@@ -71,15 +71,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         currentLong    = bundleCurrentLocation.getDouble("currentLong");
         currentAddress = bundleCurrentLocation.getString("current_address");
 
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         //initialize the googleapi client for autocomplete
         //https://developers.google.com/places/android-api/start
@@ -108,8 +99,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
             public void onPlaceSelected(Place place) {
                 currentLocation = place.getName().toString();
                 latlngFrom = place.getLatLng();
-//                latFrom = latlngFrom.latitude;
-//                longFrom = latlngFrom.longitude;
                 currentLat = latlngFrom.latitude;
                 currentLong = latlngFrom.longitude;
             }
