@@ -40,11 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         getSupportActionBar().setTitle("Walkhome");
-        int a = 0;
-
         FirebaseMessaging.getInstance().subscribeToTopic("test");
         FirebaseInstanceId.getInstance().getToken();//llk
 
@@ -62,40 +58,36 @@ public class MainActivity extends AppCompatActivity {
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
                 }else{
-
-
-
-                //verifying that inputted phone number could be a phone number
-
-                String parameters = "function=createUser&phone="+ phonenumberString + "&device_token="+FirebaseInstanceId.getInstance().getToken();
-                try{
-                    OkHttpClient connection = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
-                            //.post(body)
-                            .build();
-
-                    connection.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-                            System.out.println("CONNECTION RESPONSE: FAILED");
-                        }
-
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
-                        }
-                    });
-                } catch (Exception error){
-
-                }//end catch
-
-                    //checks if there is a walk
-                    String parameters2 = "function=getWalkByUserPhoneNumber&phone_number="+ phonenumberString;
-                    try{
+                    //verifying that inputted phone number could be a phone number
+                    String parameters = "function=createUser&phone=" + phonenumberString + "&device_token=" + FirebaseInstanceId.getInstance().getToken();
+                    try {
                         OkHttpClient connection = new OkHttpClient();
                         Request request = new Request.Builder()
-                                .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                                .url("http://dev.compsawebservices.com/walkhome/api.php?" + parameters)
+                                //.post(body)
+                                .build();
+
+                        connection.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Request request, IOException e) {
+                                System.out.println("CONNECTION RESPONSE: FAILED");
+                            }
+
+                            @Override
+                            public void onResponse(Response response) throws IOException {
+                                System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
+                            }
+                        });
+                    } catch (Exception error) {
+
+                    }//end catch
+
+                    //checks if there is a walk
+                    String parameters2 = "function=getWalkByUserPhoneNumber&phone_number=" + phonenumberString;
+                    try {
+                        OkHttpClient connection = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url("http://dev.compsawebservices.com/walkhome/api.php?" + parameters2)
                                 //.post(body)
                                 .build();
 
@@ -115,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                                     active = obj.getJSONObject("walk").getString("active");
 
                                     //only do this if there is an active walk
-                                    if(active.equals("1")){
+                                    if (active.equals("1")) {
                                         System.out.println("CONNECTION RESPONSE: SUCCESS ID: " + walkStatus);
                                         System.out.println("CONNECTION RESPONSE: SUCCESS ACTIVE: " + active);
                                         int status = Integer.parseInt(walkStatus);
@@ -128,31 +120,26 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
 
-
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         });
-                    } catch (Exception error){
+                    } catch (Exception error) {                    }
 
-                    }
-
-
-                    if(active==null){
+                    //if there is not active walk just go to navigationactivity
+                    if (active == null) {
                         Intent loginIntent = new Intent(MainActivity.this, NavigationActivity.class);
                         up = new UserProfile();
                         up.updatePhonenumber(phonenumberString);
                         startActivity(loginIntent);
                     }
-            }
+            }//end else
             }
         });
-    }
+    }//end onCreate
 
-
+    /*Checks that the phone is the correct format*/
     private boolean phoneNumberVerification(String phonenumber){
             try{
                 phonenumberLong.parseLong(phonenumber,10);

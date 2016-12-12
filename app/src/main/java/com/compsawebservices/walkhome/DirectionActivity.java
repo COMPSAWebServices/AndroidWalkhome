@@ -2,9 +2,12 @@ package com.compsawebservices.walkhome;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -31,6 +34,9 @@ import java.util.Locale;
 
 import com.compsawebservices.walkhome.R;
 
+/**
+ * Sets up two autocomplete fragments for TO and FROM
+ * */
 public class DirectionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;//for google places
@@ -45,6 +51,8 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 
     private static final String TAG = "";
     private Button requestButton;
+    private Button walkhomeInfo;
+    private Button callWalkhome;
     private String currentLocation;
     private String destination;
 
@@ -62,15 +70,42 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        walkhomeInfo = (Button)findViewById(R.id.direction_act_info);
+        callWalkhome = (Button)findViewById(R.id.direction_act_call);
 
+        walkhomeInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(DirectionActivity.this, InformationActivity.class);
+                startActivity(i);
+            }
+        });
+
+        //calls walkhome
+        callWalkhome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
+                callWalkHome.setData(Uri.parse("tel:6135339255"));
+                if (ActivityCompat.checkSelfPermission(DirectionActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                startActivity(callWalkHome);
+            }
+        });//end walkhome setonclicklistener
 
         Intent navigationActivityIntent = this.getIntent();
         Bundle bundleCurrentLocation = navigationActivityIntent.getExtras();
-
         currentLat     = bundleCurrentLocation.getDouble("currentLat");
         currentLong    = bundleCurrentLocation.getDouble("currentLong");
         currentAddress = bundleCurrentLocation.getString("current_address");
-
 
         //initialize the googleapi client for autocomplete
         //https://developers.google.com/places/android-api/start
@@ -84,17 +119,10 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         //autocomplete  from
         PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_from);
-
         autocompleteFragmentFrom.setHint(currentAddress);
+
         //To bias autocomplete results to a specific geographic region
         autocompleteFragmentFrom.setBoundsBias(new LatLngBounds(new LatLng(currentLat, currentLong), new LatLng(currentLat, currentLong) ));
-
-        //change the background color
-        //autocompleteFragmentFrom.getView().setBackgroundColor(Color.BLUE);
-
-
-
-
         autocompleteFragmentFrom.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             public void onPlaceSelected(Place place) {
                 currentLocation = place.getName().toString();
@@ -102,10 +130,8 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 currentLat = latlngFrom.latitude;
                 currentLong = latlngFrom.longitude;
             }
-
             @Override
             public void onError(Status status) {
-
             }
         });
 
@@ -113,7 +139,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
         //autocomplete to
         PlaceAutocompleteFragment autocompleteFragmentTo = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_to);
-
         autocompleteFragmentTo.setHint("Destination");
         //To bias autocomplete results to a specific geographic region
         autocompleteFragmentTo.setBoundsBias(new LatLngBounds(new LatLng(currentLat, currentLong), new LatLng(currentLat, currentLong) ));
@@ -128,11 +153,10 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 
             @Override
             public void onError(Status status) {
-
             }
         });
 
-        //request button
+        //request button redirects the page back to NavigationActivity
         requestButton = (Button)findViewById(R.id.request_button);
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,32 +165,21 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 Context context = getApplicationContext();
                 Toast toast;
                 flag = true;
-
                 //checks that destination has been filled
                 if(latTo == 0 && longTo == 0){
                     toast = Toast.makeText(context, "Please enter a destination!", duration);
                     toast.show();
                     flag = false;
                 }
-
                 //transfer Intent to NavigationAcitivty if it satisfies all the requirements
                 if(flag==true){
-                    //String message = "Testing";
-
-
                     final Geocoder geocoder = new Geocoder(DirectionActivity.this, Locale.getDefault());
-
-
-
                     Bundle bundle = new Bundle();
                     bundle.putDouble("latFrom", currentLat);
                     bundle.putDouble("longFrom", currentLong);
                     bundle.putDouble("latTo", latTo);
                     bundle.putDouble("longTo", longTo);
                     bundle.putString("page", "directionAct");
-
-
-
                     try {
                         List<Address> addressesFrom = geocoder.getFromLocation(currentLat, currentLong, 1);
                         String addressFrom = addressesFrom.get(0).getAddressLine(0);
@@ -184,10 +197,9 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                     bundle.putBoolean("directionSent", true);
                     intent.putExtras(bundle);
                     startActivity(intent);
-
                 }
             }
-        });
+        });//end requestButton setOnClick...
     }//end onCreate
 
 

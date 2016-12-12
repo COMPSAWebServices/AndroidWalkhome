@@ -1,27 +1,33 @@
 package com.compsawebservices.walkhome;
 
 /**
- * Created by Ly on 2016-10-11.
- * Contains the phonenumber of the user
+ * Keeps track and updates the current user profile
+ * Date: Dec 11th 2016
+ * Version: 3.0
  */
 
 public class UserProfile {
-
     private static String phonenumber;
-    //TODO transition from bundle to class later
-//    private static String latFrom;
-//    private static String longFrom;
-//    private static String latTo;
-//    private static String longTo;
+    private static int currentStatus;
 
+    public UserProfile(){}
 
-    public UserProfile(){    }
-
-
+    //updates the phonenumber
     public void updatePhonenumber(String phonenumber){
         this.phonenumber = phonenumber;
     }
+
+    //returns the phone number
     public String getPhonenumber(){
         return phonenumber;
     }
-}
+
+    //stores the currentStatus of the walk
+    public void setCurrentStatus(int status){
+        this.currentStatus = status;
+    }
+    //returns current status of the walk
+    public int getCurrentStatus(){
+        return this.currentStatus;
+    }
+}//end UserProfile class

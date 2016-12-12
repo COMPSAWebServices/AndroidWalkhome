@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.compsawebservices.walkhome.R;
 
+/**
+ * Sets up walkhome info page
+ * */
 public class InformationActivity extends AppCompatActivity {
     private TextView walkhomeInfo;
     private String walkhomeInfoString = "Walkhome is a student-run safety service in Kingston, Ontario. We provide safe walks to students both on the Queen’s University Campus and within the Kingston community. We are a completely anonymous and confidential service, so our staff members do not wear any clothes identifying them as a Walkhome team. We are inclusive to all students on campus, no matter your year or faculty. When you request a walk, teams of one male and one female student will accompany you to a destination of your choosing. Whether you want enjoyable conversation, safe escort for your walk, or friends to accompany you, Walkhome is the place to call!\n" +
@@ -35,7 +38,6 @@ public class InformationActivity extends AppCompatActivity {
     private Button feedbackButton;
     private Button callWalkhome;
     private Button callCampusSecurity;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

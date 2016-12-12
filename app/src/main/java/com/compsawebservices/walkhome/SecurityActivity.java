@@ -7,8 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * Sets up the campus security page
+ * */
 public class SecurityActivity extends AppCompatActivity {
 
 
@@ -29,7 +30,6 @@ public class SecurityActivity extends AppCompatActivity {
     private Button callWalkhome;
     private Button callCampusSecurity;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +37,10 @@ public class SecurityActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
-
         getSupportActionBar().setTitle("Security Information");
 
         //displays the back  button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         //sets walkhome info text
         securityInfo = (TextView) findViewById(R.id.walkhome_info);
@@ -54,8 +52,6 @@ public class SecurityActivity extends AppCompatActivity {
 
         //make securityInfo scrollable
         securityInfo.setMovementMethod(new ScrollingMovementMethod());
-
-
 
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override

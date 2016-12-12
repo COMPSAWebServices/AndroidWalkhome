@@ -1,2 +1,27 @@
 If your google maps isn't working/grey
 Need to download/replace debug.keystore && default.keyset into C:\Users\User\.android
+
+follow this tutorial: http://stackoverflow.com/questions/25288977/android-google-maps-api-v2-not-showing-map-when-published
+When you generate the apk file, android generates a new SHA1 code
+ - need to update this with the google maps API
+
+to get the new SHA1 code:
+ cd to the jks directory
+ in cmd prompt: 
+	"C:\Program Files\Java\jre7\bin\keytool.exe" -list -v -keystore android.jks
+ 
+
+keystore pass and keyalias pass should be the same : 7452g8
+
+To change: 
+keytool -storepasswd -new [insert new keystore password] -keystore [insert keystore file name]
+keytool -keypasswd -alias [insert alias] -new [insert new key password] -keystore [insert keystore file name]
+
+replace keytool with "C:\Program Files\Java\jre7\bin\keytool.exe"
+
+
+Currently using API4
+
+There are two versions of google_maps_api.xml
+	1. one for debug
+	2. the other for release

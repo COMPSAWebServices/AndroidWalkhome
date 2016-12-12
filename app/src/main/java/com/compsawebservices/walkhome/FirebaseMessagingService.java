@@ -1,6 +1,5 @@
 package com.compsawebservices.walkhome;
 
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,49 +9,32 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.MainThread;
 import android.support.v4.app.NotificationCompat;
-import android.widget.TextView;
 
 import com.google.firebase.messaging.RemoteMessage;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 
 /**
- * Created by Ly on 2016-10-05.
+ * Runs in the background and waits for a reponse from firebase service
+ * Date: Dec 11th 2016
+ * Version: 3.0
  */
-
 public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
-    private int status = 1;
-    static StatusTracker st = new StatusTracker();
-    static UserProfile userProfile = new UserProfile();
-    private String walkID;
-    private String walkStatus;
 
-//    StatusActivity statusActivity = new StatusActivity();
+    //handles message received
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
-        System.out.println("STATUSssssssssssssssssssss: " + st.getCount());
         Intent intent = new Intent(this, StatusActivity.class);
-        intent.putExtra("status", st.getCount());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         sendNotification(remoteMessage.getNotification().getBody());
-    }
+    }//end onMessageReceived
 
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, StatusActivity.class);
-        intent.putExtra("status", st.getCount());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        //builds the notification
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.walkhomelogo2)
@@ -64,6 +46,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-    }
+    }//end sendNotification
 
-}
+}//end FirebaseMessagingService

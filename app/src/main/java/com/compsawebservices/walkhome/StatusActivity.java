@@ -5,43 +5,44 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
-
-
+/**
+ * StatusActivity class handles http request from COMPSA backend api to get the current walk status.
+ * It first uses the phone number to get the current walk state and updates the page accordingly.
+ * Once status = 4 which means the walk has been completed, redirect the page to FeedbackActivity.
+ * Author: Ly Sung
+ * Date: Dec 11th 2016
+ * Version: 3.0
+ * **/
 public class StatusActivity extends AppCompatActivity {
-    private TextView reqSent;
-    private TextView reqReceived;
-    private TextView walkerOut;
-    private TextView walkProgress;
-    private TextView walkCompleted;
-    private TextView statusInfo;
+    private  TextView reqSent;
+    private  TextView reqReceived;
+    private  TextView walkerOut;
+    private  TextView walkProgress;
+    private  TextView walkCompleted;
+    private  TextView statusInfo;
 
     private Button cancelWalk;
     private Button callWalkhome;
     private Button feedbackForm;
-    private int statusIncrementor;
-    private int status;
     static StatusTracker st = new StatusTracker();
+    //will be using userProfile to keep track of walk status
     static UserProfile userProfile = new UserProfile();
     private String walkID;
     private String walkStatus;
@@ -57,6 +58,8 @@ public class StatusActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Status");
 
+        statusUpdate();
+
         reqSent = (TextView)findViewById(R.id.request_sent);
         reqReceived = (TextView)findViewById(R.id.request_received);
         walkerOut = (TextView)findViewById(R.id.walker_out);
@@ -68,7 +71,7 @@ public class StatusActivity extends AppCompatActivity {
         callWalkhome = (Button)findViewById(R.id.button_call_walkhome);
         feedbackForm = (Button)findViewById(R.id.button_feedback_form);
 
-
+        //call walk home button
         callWalkhome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +91,7 @@ public class StatusActivity extends AppCompatActivity {
             }
         });//end walkhome setonclicklistener
 
-
+        //feedback button
         feedbackForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +100,7 @@ public class StatusActivity extends AppCompatActivity {
             }
         });
 
+        //cancel button
         cancelWalk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,19 +173,27 @@ public class StatusActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                } catch (Exception error){
-
-                }
+                } catch (Exception error){}
                 //resets the counter
-                st.resetCount();
+                //st.resetCount();
             }//end onCLICK
         });//end cancelwalk
 
-        //st = new StatusTracker();
-        status = st.getCount();
-        System.out.println("STAAAAAAAAAAATUS IN STATUS ACTIVITY: " + status);
+        //checks and updates the current status
+        statusUpdate();
+        /*I think because of multi-threading, statusPageUpdate was running before statusPageUpdate()
+        * Added a delay so that statusUpdate() finishes first*/
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                statusPageUpdate();
+            }
+        }, 500);
 
-        //checks if there is a walk
+    }//end on create
+
+    /**Calls the backend to check what status the walk is currently in and updates the status*/
+    public void statusUpdate(){
         String parameters2 = "function=getWalkByUserPhoneNumber&phone_number="+ userProfile.getPhonenumber();
         try{
             OkHttpClient connection = new OkHttpClient();
@@ -189,69 +201,61 @@ public class StatusActivity extends AppCompatActivity {
                     .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
                     //.post(body)
                     .build();
-
             connection.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
                     System.out.println("CONNECTION RESPONSE: FAILED");
                 }
-
+                //if there is a reponse
                 @Override
                 public void onResponse(Response response) throws IOException {
                     String jsonData = response.body().string();
-
                     try {
                         JSONObject obj = new JSONObject(jsonData);
                         walkStatus = obj.getJSONObject("walk").getString("status");
-                        status = Integer.parseInt(walkStatus);
-                        System.out.println("STATTTTTTTTTTTTTTUSSSSSSSSSSSS IN STATUSACT: " + status);
-                        switch(status){
-                            case 1:
-                                reqReceived = (TextView)findViewById(R.id.request_received);
-                                reqReceived.setTextColor(Color.WHITE);
-                                statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
-                                break;
-                            case 2:
-                                reqReceived = (TextView)findViewById(R.id.request_received);
-                                reqReceived.setTextColor(Color.WHITE);
-                                walkerOut.setTextColor(Color.WHITE);
-                                statusInfo.setText("Walkers are currently on their way!");
-                                break;
-                            case 3:
-                                reqReceived = (TextView)findViewById(R.id.request_received);
-                                reqReceived.setTextColor(Color.WHITE);
-                                walkerOut.setTextColor(Color.WHITE);
-                                walkProgress.setTextColor(Color.WHITE);
-                                statusInfo.setText("Walk in progress...");
-                                break;
-                            case 4:
-                                reqReceived = (TextView)findViewById(R.id.request_received);
-                                reqReceived.setTextColor(Color.WHITE);
-                                walkerOut.setTextColor(Color.WHITE);
-                                walkProgress.setTextColor(Color.WHITE);
-                                walkCompleted.setTextColor(Color.WHITE);
-                                statusInfo.setText("Walk completed!");
-
-                                //disables cancel walk button
-                                //cancelWalk.setEnabled(false);
-                                Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
-                                startActivity(i);
-                                break;
-
-                        }
-
-
+                        int currentStatus = Integer.parseInt(walkStatus);
+                        userProfile.setCurrentStatus(currentStatus);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            });
-        } catch (Exception error){
+            });//end on respond
+        } catch (Exception error){}
+    }//end statusupdate
 
+    /**Updates the page by checking with the walk status saved in UserProfile**/
+    public void statusPageUpdate(){
+        if (userProfile.getCurrentStatus() == 1) {
+            reqReceived.setTextColor(Color.WHITE);
+            walkerOut.setTextColor(Color.parseColor("#818181"));
+            walkProgress.setTextColor(Color.parseColor("#818181"));
+            walkCompleted.setTextColor(Color.parseColor("#818181"));
+            statusInfo.setText("Your request has been received. The next available walking team will be heading your way");
+        } else if (userProfile.getCurrentStatus() == 2) {
+            reqReceived.setTextColor(Color.WHITE);
+            walkerOut.setTextColor(Color.WHITE);
+            walkProgress.setTextColor(Color.parseColor("#818181"));
+            walkCompleted.setTextColor(Color.parseColor("#818181"));
+            statusInfo.setText("Walkers are currently on their way!");
+            //walkers out
+        } else if (userProfile.getCurrentStatus() == 3) {
+            reqReceived.setTextColor(Color.WHITE);
+            walkerOut.setTextColor(Color.WHITE);
+            walkProgress.setTextColor(Color.WHITE);
+            walkCompleted.setTextColor(Color.parseColor("#818181"));
+            statusInfo.setText("Walk in progress...");
+        } else if (userProfile.getCurrentStatus() == 4) {
+            reqReceived.setTextColor(Color.WHITE);
+            walkerOut.setTextColor(Color.WHITE);
+            walkProgress.setTextColor(Color.WHITE);
+            walkCompleted.setTextColor(Color.WHITE);
+            statusInfo.setText("Walk completed!");
+            Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
+            startActivity(i);
+        } else{
+            statusInfo.setText("There is no walk on this phone number!");
         }
-
-    }//end on create
-
+    }//end statusPageUpdate
 
     @Override
     public void onBackPressed() {
@@ -260,7 +264,5 @@ public class StatusActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        st.resetCount();
     }
-
-}
+}//end StatusActivity class

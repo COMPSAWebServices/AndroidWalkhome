@@ -2,6 +2,7 @@ package com.compsawebservices.walkhome;
 
 /**
  * Created by Ly on 2016-10-11.
+ * Delete this file later. Don't need it
  */
 
 public class StatusTracker {

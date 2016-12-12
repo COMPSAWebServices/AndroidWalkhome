@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * Sets up feedback page
+ * */
 public class FeedbackActivity extends AppCompatActivity {
 
     private EditText feedbackText;
@@ -41,7 +44,6 @@ public class FeedbackActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#1ca7f7"));
-
 
         getSupportActionBar().setTitle("FeedBack");
 
@@ -63,7 +65,6 @@ public class FeedbackActivity extends AppCompatActivity {
         feedbackText = (EditText)findViewById(R.id.feedback_editText);
         userFeedback = feedbackText.getText().toString();
         //gets the current time
-
 
         submit = (Button)findViewById(R.id.submit_feedback) ;
         submit.setOnClickListener(new View.OnClickListener() {
@@ -94,10 +95,6 @@ public class FeedbackActivity extends AppCompatActivity {
                             System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
                             Intent intent = new Intent(FeedbackActivity.this, MainActivity.class);
                             startActivity(intent);
-                            Context context = getApplicationContext();
-                            int duration = Toast.LENGTH_LONG;
-//                            toast = Toast.makeText(context,"Please provide a valid phone number.",duration);
-//                            toast.show();
                         }
                     });
                 } catch (Exception error){
@@ -105,10 +102,6 @@ public class FeedbackActivity extends AppCompatActivity {
                 }//end catch
             }
         });
-
-
-
-
     }//end onCreate
 
     @Override
