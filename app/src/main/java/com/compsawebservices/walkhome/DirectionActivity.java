@@ -88,16 +88,19 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
                 callWalkHome.setData(Uri.parse("tel:6135339255"));
                 if (ActivityCompat.checkSelfPermission(DirectionActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                    //request permission from user if the app hasn't got the required permission
+                    ActivityCompat.requestPermissions(DirectionActivity.this,
+                            new String[]{android.Manifest.permission.CALL_PHONE},   //request specific permission from user
+                            10);
                     return;
+                }else {
+                    try{
+                        startActivity(callWalkHome);//call activity and make phone call
+                    }
+                    catch (android.content.ActivityNotFoundException ex){
+                        Toast.makeText(getApplicationContext(),"yourActivity is not founded",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                startActivity(callWalkHome);
             }
         });//end walkhome setonclicklistener
 

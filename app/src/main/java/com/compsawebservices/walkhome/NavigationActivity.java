@@ -1,7 +1,10 @@
 package com.compsawebservices.walkhome;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,11 +12,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.AvoidType;
@@ -35,9 +42,16 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -84,21 +98,18 @@ public class NavigationActivity extends AppCompatActivity
     private double longTo;
     private String currentAddressFrom;
     private String currentAddressTo;
-
     private String phoneNumber;
     private boolean flag = false;//use to keep back of the fab, switching between dir and send button
-    private LocationRequest currentLocationRequest;
+    LocationManager locationManager;
     private Marker currentLocationMarker;
-
     private Polyline queensBoundary;
-    private int count=1;
-
     static UserProfile userProfile = new UserProfile();
+    LocationRequest locationRequest;
+    //protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_navigation);
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -109,6 +120,18 @@ public class NavigationActivity extends AppCompatActivity
 
         //gets the phonenumber from userprofile
         phoneNumber = userProfile.getPhonenumber();
+
+        //checks if Android version is greater than build version which is 5.0
+        //Android Version 6+ requires special type of permission request for location
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+        //checks that GPS is enabled
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //settingsrequest();
+            alertLocation();
+        }
 
         //googlemaps fragment set up
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -129,7 +152,6 @@ public class NavigationActivity extends AppCompatActivity
 
         //Floating Action Button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setVisibility(View.GONE);
 
         //calls setDirection if we know that the user has already entered their destination
         if (flag) {
@@ -146,7 +168,7 @@ public class NavigationActivity extends AppCompatActivity
             });
         }
         //change the fab icon to direction when flag if false
-        else{
+        else {
             fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.direction));
             fab.setOnClickListener(new View.OnClickListener() {
                 //redirects to DirectionAct if user clicks on the direction fab icon
@@ -163,7 +185,7 @@ public class NavigationActivity extends AppCompatActivity
                         List<Address> addresses = geocoder.getFromLocation(currentLat, currentLong, 1);
                         String address = addresses.get(0).getAddressLine(0);
                         setBundle.putString("current_address", address);
-                    } catch(Exception e){
+                    } catch (Exception e) {
 
                     }
                     currentLocationIntent.putExtras(setBundle);
@@ -173,10 +195,60 @@ public class NavigationActivity extends AppCompatActivity
         }//end else
     }//end onCreate
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //stops location updates when Activity is no longer active
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }//end onPause()
 
-    //Checks to see if the page was directed from DirectionActivity
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        onConnected(Bundle.EMPTY);
+    }
+
+//    @Override
+//    protected void onResume(){
+//        super.onResume();
+//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        onLocationChanged(currentLocation);
+//    }
+
+    /**Alerts the user if the Location Service is turned off**/
+    public void alertLocation() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Walkhome requires GPS service, please turn on your Location Service!")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }//checkGPSEnabled();
+
+    /**Checks to see if the page was directed from DirectionActivity**/
     protected void checkDirectionIntent(){
-        count++;
+        //count++;
         try {
             //gets intent from DirectionActivity
             Intent intent = this.getIntent();
@@ -193,7 +265,6 @@ public class NavigationActivity extends AppCompatActivity
         } catch (Exception e) {} //end try-catch
     }//end checkDirectionIntent
 
-
     /**Shows the direction**/
     public void setDirections() {
         //requires server key from google dev console instead of the api key
@@ -205,7 +276,6 @@ public class NavigationActivity extends AppCompatActivity
                 .avoid(AvoidType.HIGHWAYS)
                 .transportMode(TransportMode.WALKING)
                 .execute(new DirectionCallback() {
-
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
                         String status = direction.getStatus();
@@ -230,7 +300,6 @@ public class NavigationActivity extends AppCompatActivity
                             // Do something
                         }
                     }
-
                     @Override
                     public void onDirectionFailure(Throwable t) {
                         // Do something
@@ -239,13 +308,57 @@ public class NavigationActivity extends AppCompatActivity
                 });
     }//ends setDirections
 
+    /**Once we have all the required information, send it to walkhome api**/
+    public void sendDataToWalkhome(){
+        //gets the current time
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String time = sdf.format(calendar.getTime());
+
+        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd");
+        time = mdformat.format(calendar.getTime()) + " " + time;
+
+        String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
+                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+        try{
+            OkHttpClient connection = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
+                    //.post(body)
+                    .build();
+            connection.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    System.out.println("CONNECTION RESPONSE: FAILED");
+                }
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
+                }
+            });
+        } catch (Exception error){}//end catch
+    }//end sendDataToWalkhome
 
     /***********************************************GGOOGLE MAPS**************************************************************/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
+        //Initialize Google Play Services
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //location permission is already granted
+                buildGoogleApiClient();
+                mMap.setMyLocationEnabled(true);
+            }
+        }
+        else {
+            //Request Location Permission
+            //checkLocationPermission();
+            buildGoogleApiClient();
+            mMap.setMyLocationEnabled(true);
+        }
     }//end on mapready
 
     protected synchronized void buildGoogleApiClient() {
@@ -255,12 +368,13 @@ public class NavigationActivity extends AppCompatActivity
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
-    }
+    }//end buildGoogleApiClient
 
-    //sets up the actual map
+    /**Sets up the map and shows the boundary**/
     @Override
     public void onConnected(Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -270,32 +384,20 @@ public class NavigationActivity extends AppCompatActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location userLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if (userLastLocation != null) {
-            currentLat = userLastLocation.getLatitude();
-            currentLong = userLastLocation.getLongitude();
-            LatLng currentLatLong = new LatLng(currentLat, currentLong);
-            MarkerOptions currentMarker = new MarkerOptions();
-            currentMarker.position(currentLatLong);
-            currentMarker.title("Current Location");
-            currentLocationMarker = mMap.addMarker(currentMarker);
-            //sets the map at the current location
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 14));
-
+        //updates current location of user at regular intervals
+        //FusedLocationProvider analysis GPS, Cellular, and Wi-Fi Network location in order to provide the highest accuracy datta
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         }
-        //checks for current location every interval and moves the camera back to the current location
-        currentLocationRequest = new LocationRequest();
-        currentLocationRequest.setInterval(50000); //50 seconds
-        currentLocationRequest.setFastestInterval(60000); //60 seconds
-        currentLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        //google maps current location
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, currentLocationRequest, this);
 
         //poly line for the walkhome boundary
         PolylineOptions queensBoundaryPolyLine = new PolylineOptions()
-                //I blame IOS people for making me to this...
                 .add(new LatLng(44.219465,-76.507441 ))
                 .add(new LatLng(44.221433,-76.507688))
                 .add(new LatLng(44.221041,-76.512731))
@@ -398,7 +500,7 @@ public class NavigationActivity extends AppCompatActivity
     public void onConnectionSuspended(int i) {
     }
 
-    /*Marks and moves to the current location of the user*/
+    /**Marks and moves to the current location of the user*/
     @Override
     public void onLocationChanged(Location location) {
         if (currentLocationMarker != null) {
@@ -412,11 +514,10 @@ public class NavigationActivity extends AppCompatActivity
         currentMarker.title("Current Location");
         currentLocationMarker = mMap.addMarker(currentMarker);
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(newCurrentLatLng).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newCurrentLatLng, 14));
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -426,7 +527,11 @@ public class NavigationActivity extends AppCompatActivity
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mMap.setMyLocationEnabled(true);
+        //mMap.setMyLocationEnabled(true);
+        //stops location updaetes
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
     }
 
     @Override
@@ -434,36 +539,70 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
-    //Once we have all the required information, send it to walkhome api
-    public void sendDataToWalkhome(){
-        //gets the current time
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String time = sdf.format(calendar.getTime());
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
-        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd");
-        time = mdformat.format(calendar.getTime()) + " " + time;
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-        String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
-        try{
-            OkHttpClient connection = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
-                    //.post(body)
-                    .build();
-            connection.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    System.out.println("CONNECTION RESPONSE: FAILED");
+                //requests the user to allow permission
+                new AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("Walkhome requires Location permission!")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(NavigationActivity.this,
+                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                //request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION );
+            }
+        }
+    }//end checkLocationPermission
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted. Do the
+                    // contacts-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        if (mGoogleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        mMap.setMyLocationEnabled(true);
+                    }
+                } else {
+                    // Permission denied, Disable the functionality that depends on this permission.
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
-                }
-            });
-        } catch (Exception error){}//end catch
-    }//end sendDataToWalkhome
+                return;
+            }
+            // other 'case' lines to check for other permissions this app might request.
+            // You can add here other case statements according to your requirement.
+        }
+    }
+
+
 
     /***********************************************NAVIGATION DRAWER**************************************************************/
     @Override

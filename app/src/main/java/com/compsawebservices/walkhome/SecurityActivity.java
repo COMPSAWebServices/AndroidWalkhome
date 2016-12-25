@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Sets up the campus security page
@@ -66,17 +67,20 @@ public class SecurityActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
                 callWalkHome.setData(Uri.parse("tel:6135339255"));
-                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    //request permission from user if the app hasn't got the required permission
+                    ActivityCompat.requestPermissions(SecurityActivity.this,
+                            new String[]{android.Manifest.permission.CALL_PHONE},   //request specific permission from user
+                            10);
                     return;
+                }else {
+                    try{
+                        startActivity(callWalkHome);//call activity and make phone call
+                    }
+                    catch (android.content.ActivityNotFoundException ex){
+                        Toast.makeText(getApplicationContext(),"yourActivity is not founded",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                startActivity(callWalkHome);
             }
         });//end walkhome setonclicklistener
 
@@ -86,17 +90,20 @@ public class SecurityActivity extends AppCompatActivity {
                 Intent callCampusSecurity = new Intent(Intent
                         .ACTION_DIAL);
                 callCampusSecurity.setData(Uri.parse("tel:6135336111"));
-                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (ActivityCompat.checkSelfPermission(SecurityActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    //request permission from user if the app hasn't got the required permission
+                    ActivityCompat.requestPermissions(SecurityActivity.this,
+                            new String[]{android.Manifest.permission.CALL_PHONE},   //request specific permission from user
+                            10);
                     return;
+                }else {
+                    try{
+                        startActivity(callCampusSecurity);//call activity and make phone call
+                    }
+                    catch (android.content.ActivityNotFoundException ex){
+                        Toast.makeText(getApplicationContext(),"yourActivity is not founded",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                startActivity(callCampusSecurity);
             }
         });//end callCW onclicklistener
 

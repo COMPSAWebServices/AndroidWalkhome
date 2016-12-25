@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.compsawebservices.walkhome.R;
 
@@ -78,17 +79,22 @@ public class InformationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent callWalkHome = new Intent(Intent.ACTION_DIAL);
                 callWalkHome.setData(Uri.parse("tel:6135339255"));
+                //Asks user to grant permission to make call if the device is running Android 6.0(API level 23 or higher)
+                //while the app's targetsdkVersion is 23 or higher
                 if (ActivityCompat.checkSelfPermission(InformationActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                    //request permission from user if the app hasn't got the required permission
+                    ActivityCompat.requestPermissions(InformationActivity.this,
+                            new String[]{android.Manifest.permission.CALL_PHONE},   //request specific permission from user
+                            10);
                     return;
+                }else {
+                    try{
+                        startActivity(callWalkHome);//call activity and make phone call
+                    }
+                    catch (android.content.ActivityNotFoundException ex){
+                        Toast.makeText(getApplicationContext(),"yourActivity is not founded",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                startActivity(callWalkHome);
             }
         });//end walkhome setonclicklistener
 
@@ -98,16 +104,19 @@ public class InformationActivity extends AppCompatActivity {
                 Intent callCampusSecurity = new Intent(Intent.ACTION_DIAL);
                 callCampusSecurity.setData(Uri.parse("tel:6135536111"));
                 if (ActivityCompat.checkSelfPermission(InformationActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                    //request permission from user if the app hasn't got the required permission
+                    ActivityCompat.requestPermissions(InformationActivity.this,
+                            new String[]{android.Manifest.permission.CALL_PHONE},   //request specific permission from user
+                            10);
                     return;
+                }else {
+                    try{
+                        startActivity(callCampusSecurity);//call activity and make phone call
+                    }
+                    catch (android.content.ActivityNotFoundException ex){
+                        Toast.makeText(getApplicationContext(),"yourActivity is not founded",Toast.LENGTH_SHORT).show();
+                    }
                 }
-                startActivity(callCampusSecurity);
             }
         });//end callCW onclicklistener
 
