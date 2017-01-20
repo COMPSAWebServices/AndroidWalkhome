@@ -318,8 +318,8 @@ public class NavigationActivity extends AppCompatActivity
         SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd");
         time = mdformat.format(calendar.getTime()) + " " + time;
 
-        String parameters = "function=addWalk&team=w1&request_time=" + time + "&status=1&pick_up_location=" + currentAddressFrom +
-                "&drop_off_location=" + currentAddressTo + "&phone_number=" + phoneNumber;
+        String parameters = "function=addWalk&team=w1&time=" + time + "&status=1&up=" + currentAddressFrom +
+                "&drop=" + currentAddressTo + "&phone=" + phoneNumber;
         try{
             OkHttpClient connection = new OkHttpClient();
             Request request = new Request.Builder()
