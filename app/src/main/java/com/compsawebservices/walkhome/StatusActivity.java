@@ -109,7 +109,7 @@ public class StatusActivity extends AppCompatActivity {
                 try{
                     OkHttpClient connection = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters)
+                            .url("http://backstage.compsawebservices.com/walkhome/api.php?"+parameters)
                             //.post(body)
                             .build();
 
@@ -198,7 +198,7 @@ public class StatusActivity extends AppCompatActivity {
         try{
             OkHttpClient connection = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                    .url("http://backstage.compsawebservices.com/walkhome/api.php?"+parameters2)
                     //.post(body)
                     .build();
             connection.newCall(request).enqueue(new Callback() {
