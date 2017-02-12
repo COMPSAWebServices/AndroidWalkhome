@@ -93,15 +93,22 @@ public class FeedbackActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Response response) throws IOException {
                             System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
-                            Intent intent = new Intent(FeedbackActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
+
+                            if(userProfile.getCurrentStatus() == 4){
+                                Intent intent = new Intent(FeedbackActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            }else{
+                                Intent intent = new Intent(FeedbackActivity.this, StatusActivity.class);
+                                startActivity(intent);
+                            }
+
+                        }//end onReponse
                     });
                 } catch (Exception error){
 
                 }//end catch
             }
-        });
+        });//end setOnCLickLlistener
     }//end onCreate
 
     @Override

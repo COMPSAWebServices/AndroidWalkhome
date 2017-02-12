@@ -115,8 +115,16 @@ public class MainActivity extends AppCompatActivity {
                                         //redirect back to navigation
                                         //minus 1 because when StatusActivity calls st.getCount() it adds one to it.
                                         st.updateStatus(status);
-                                        Intent intent = new Intent(MainActivity.this, StatusActivity.class);
-                                        startActivity(intent);
+
+                                        //if the status is 4 (completed) then redirect the user to NavigationActivity
+                                        //else redirect them to statusActivity
+                                        if (status!=4){
+                                            Intent intent = new Intent(MainActivity.this, StatusActivity.class);
+                                            startActivity(intent);
+                                        }else {
+                                            Intent intent = new Intent(MainActivity.this, NavigationActivity.class);
+                                            startActivity(intent);
+                                        }
                                     }
 
 

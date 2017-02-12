@@ -141,7 +141,7 @@ public class StatusActivity extends AppCompatActivity {
                                 try{
                                     OkHttpClient connection = new OkHttpClient();
                                     final Request request = new Request.Builder()
-                                            .url("http://dev.compsawebservices.com/walkhome/api.php?"+parameters2)
+                                            .url("http://backstage.compsawebservices.com/walkhome/api.php?"+parameters2)
                                             //.post(body)
                                             .build();
 
@@ -181,7 +181,7 @@ public class StatusActivity extends AppCompatActivity {
 
         //checks and updates the current status
         statusUpdate();
-        /*I think because of multi-threading, statusPageUpdate was running before statusPageUpdate()
+        /*statusPageUpdate was running before statusUpdate()
         * Added a delay so that statusUpdate() finishes first*/
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -253,7 +253,9 @@ public class StatusActivity extends AppCompatActivity {
             Intent i = new Intent(StatusActivity.this, FeedbackActivity.class);
             startActivity(i);
         } else{
-            statusInfo.setText("There is no walk on this phone number!");
+            //statusInfo.setText("There is no walk on this phone number!");
+            Intent i = new Intent(StatusActivity.this, MainActivity.class);
+            startActivity(i);
         }
     }//end statusPageUpdate
 

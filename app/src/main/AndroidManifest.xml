@@ -54,17 +54,13 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
-            <!--<intent-filter>-->
-                <!--<action android:name="OPEN_ACTIVITY_1" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--</intent-filter>-->
         </activity>
 
         <service android:name=".FirebaseMessagingService">
@@ -82,27 +78,32 @@
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".DirectionActivity"
             android:label="@string/title_activity_direction"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".InformationActivity"
             android:label="@string/title_activity_information"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".FeedbackActivity"
             android:label="@string/title_activity_feedback"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".StatusActivity"
             android:label="@string/title_activity_status"
-            android:theme="@style/AppTheme.NoActionBar" >
-            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="OPEN_ACTIVITY_1" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -112,6 +113,7 @@
             android:name=".SecurityActivity"
             android:label="@string/title_activity_security"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
             android:screenOrientation="portrait"></activity>
     </application>
 
