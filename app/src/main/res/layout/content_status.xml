@@ -35,9 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/request_recieved"
-            android:textColor="#818181"
             android:layout_marginTop="10dp"
-            android:textSize="20dp"/>
+            android:textSize="20dp"
+            android:textColor="#818181"/>
 
 
 

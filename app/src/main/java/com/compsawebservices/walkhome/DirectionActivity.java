@@ -58,7 +58,6 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
 
     private int duration = Toast.LENGTH_SHORT;;//toast length
     private Boolean flag = false;
-    private String testing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

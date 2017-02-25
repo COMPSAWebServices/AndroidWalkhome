@@ -1,10 +1,8 @@
 package com.compsawebservices.walkhome;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,7 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.AvoidType;
@@ -42,44 +39,33 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.io.IOException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 /**
- * Sets up the google maps api frament so show the current location of the user, the path of the walk
+ * Sets up google maps api fragment to show the current location of the user, the path of the walk
  * and a button where the users can click that redirects the page to DirectionActivity where the user
  * will be able to enter their location to be picked up and where to drop them off.
  * Author: Ly Sung
@@ -129,7 +115,6 @@ public class NavigationActivity extends AppCompatActivity
         //checks that GPS is enabled
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            //settingsrequest();
             alertLocation();
         }
 
@@ -138,7 +123,7 @@ public class NavigationActivity extends AppCompatActivity
                 .findFragmentById(R.id.content_map);
         mapFragment.getMapAsync(this);
 
-        //updates current location and possibly destination
+        //checks to see if there was an intent from DirectionActivity
         checkDirectionIntent();
 
         //navigation drawer
@@ -162,8 +147,6 @@ public class NavigationActivity extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
                     sendDataToWalkhome();
-                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
-                    startActivity(startStatusIntent);
                 }
             });
         }
@@ -210,23 +193,6 @@ public class NavigationActivity extends AppCompatActivity
         onConnected(Bundle.EMPTY);
     }
 
-//    @Override
-//    protected void onResume(){
-//        super.onResume();
-//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        onLocationChanged(currentLocation);
-//    }
-
     /**Alerts the user if the Location Service is turned off**/
     public void alertLocation() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -246,9 +212,9 @@ public class NavigationActivity extends AppCompatActivity
         alert.show();
     }//checkGPSEnabled();
 
-    /**Checks to see if the page was directed from DirectionActivity**/
+    /**Checks to see if the page was directed from DirectionActivity
+     * and stores all the intent values**/
     protected void checkDirectionIntent(){
-        //count++;
         try {
             //gets intent from DirectionActivity
             Intent intent = this.getIntent();
@@ -265,7 +231,7 @@ public class NavigationActivity extends AppCompatActivity
         } catch (Exception e) {} //end try-catch
     }//end checkDirectionIntent
 
-    /**Shows the direction**/
+    /**Shows the direction of the user's current position to their desstination **/
     public void setDirections() {
         //requires server key from google dev console instead of the api key
         //https://developers.google.com/maps/documentation/directions/?hl=en_US
@@ -281,9 +247,9 @@ public class NavigationActivity extends AppCompatActivity
                         String status = direction.getStatus();
                         //add the other market
                         LatLng test = new LatLng(latTo, longTo);
+                        //add a marker
                         mMap.addMarker(new MarkerOptions().position(test).title("Destination"));
                         if (status.equals(RequestResult.OK)) {
-                            // Do something
                             //Direction from origin to destination location
                             Route route = direction.getRouteList().get(0);
                             //Leg: the direction way from one location to another location
@@ -299,7 +265,7 @@ public class NavigationActivity extends AppCompatActivity
                         } else if (status.equals(RequestResult.NOT_FOUND)) {
                             // Do something
                         }
-                    }
+                    }//end onDirectionSucess
                     @Override
                     public void onDirectionFailure(Throwable t) {
                         // Do something
@@ -309,7 +275,7 @@ public class NavigationActivity extends AppCompatActivity
     }//ends setDirections
 
     /**Once we have all the required information, send it to walkhome api**/
-    public void sendDataToWalkhome(){
+    public boolean sendDataToWalkhome(){
         //gets the current time
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -330,16 +296,28 @@ public class NavigationActivity extends AppCompatActivity
                 @Override
                 public void onFailure(Request request, IOException e) {
                     System.out.println("CONNECTION RESPONSE: FAILED");
+                    //display an error message
+                    Context context = getApplicationContext();
+                    CharSequence text = "Request walk failed!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
                 @Override
                 public void onResponse(Response response) throws IOException {
                     System.out.println("CONNECTION RESPONSE: SUCCESS" + response);
+                    //start statusActivity if successful
+                    Intent startStatusIntent = new Intent(NavigationActivity.this, StatusActivity.class);
+                    startActivity(startStatusIntent);
+
                 }
             });
         } catch (Exception error){}//end catch
+        return true;
     }//end sendDataToWalkhome
 
-    /***********************************************GGOOGLE MAPS**************************************************************/
+    /***********************************************GGOOGLE MAPS SET UP**************************************************************/
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -355,7 +333,6 @@ public class NavigationActivity extends AppCompatActivity
         }
         else {
             //Request Location Permission
-            //checkLocationPermission();
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
@@ -539,6 +516,7 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
+    //Checks that the user's location is on
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
