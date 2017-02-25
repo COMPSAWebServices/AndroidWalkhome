@@ -28,6 +28,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         sendNotification(remoteMessage.getNotification().getBody());
     }//end onMessageReceived
 
+    /**Sends the push notification**/
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, StatusActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

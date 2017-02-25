@@ -65,9 +65,9 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 /**
- * Sets up google maps api fragment to show the current location of the user, the path of the walk
- * and a button where the users can click that redirects the page to DirectionActivity where the user
- * will be able to enter their location to be picked up and where to drop them off.
+ * Sets up google maps api fragment to show the current location of the user, all the bluelights, walkhome and campus security.
+ * The button on the bottom right allows the user to enter DirectionActivity. Once the user is redirected from DirectionActivity,
+ * the path of the walk will be displayed and the button changes to an arrow when clicked will send the walk request to walkhome.
  * Author: Ly Sung
  * Date: Dec 11th 2016
  * */
@@ -193,7 +193,7 @@ public class NavigationActivity extends AppCompatActivity
         onConnected(Bundle.EMPTY);
     }
 
-    /**Alerts the user if the Location Service is turned off**/
+    /**Alerts the user if Location Service is turned off**/
     public void alertLocation() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Walkhome requires GPS service, please turn on your Location Service!")
@@ -245,9 +245,8 @@ public class NavigationActivity extends AppCompatActivity
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
                         String status = direction.getStatus();
-                        //add the other market
                         LatLng test = new LatLng(latTo, longTo);
-                        //add a marker
+                        //add the destination marker
                         mMap.addMarker(new MarkerOptions().position(test).title("Destination"));
                         if (status.equals(RequestResult.OK)) {
                             //Direction from origin to destination location
@@ -549,6 +548,8 @@ public class NavigationActivity extends AppCompatActivity
         }
     }//end checkLocationPermission
 
+    /**Callback for the result from requesting permissions. This method is invoked for every call on
+     *  requestPermissions(android.app.Activity, String[], int).**/
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -558,8 +559,7 @@ public class NavigationActivity extends AppCompatActivity
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted. Do the
-                    // contacts-related task you need to do.
+                    // permission was granted
                     if (ContextCompat.checkSelfPermission(this,
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
@@ -616,6 +616,8 @@ public class NavigationActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }//end onOptionsSelected
 
+
+    /**Side menu**/
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
- * StatusActivity class handles http request from COMPSA backend api to get the current walk status.
+ * StatusActivity class handles request from COMPSA backend api to get the current walk status.
  * It first uses the phone number to get the current walk state and updates the page accordingly.
  * Once status = 4 which means the walk has been completed, redirect the page to FeedbackActivity.
  * Author: Ly Sung
@@ -41,7 +41,6 @@ public class StatusActivity extends AppCompatActivity {
     private Button cancelWalk;
     private Button callWalkhome;
     private Button feedbackForm;
-    static StatusTracker st = new StatusTracker();
     //will be using userProfile to keep track of walk status
     static UserProfile userProfile = new UserProfile();
     private String walkID;
@@ -126,15 +125,6 @@ public class StatusActivity extends AppCompatActivity {
                             try {
                                 JSONObject obj = new JSONObject(jsonData);
                                 walkID = obj.getJSONObject("walk").getString("id");
-//                                JSONArray walkIDJson = (JSONArray) obj.get("walk");
-//                                ArrayList<String> list = new ArrayList<String>();
-//                                for(int i=0; i<walkIDJson.length(); i++){
-//                                    list.add(walkIDJson.getJSONObject(i).getString("name"));
-//                                }
-//
-//                                System.out.println("ARRAYLIST" + list);
-//                                System.out.println("JSONARRAY" + walkIDJson);
-                                System.out.println("CONNECTION RESPONSE: SUCCESS ID" +walkID);
 
                                 //call cancel walk function here
                                 String parameters2 = "function=cancelWalk&id="+ walkID;
@@ -159,23 +149,15 @@ public class StatusActivity extends AppCompatActivity {
                                 } catch (Exception error){
 
                                 }//end cancelwalk catch
-
-
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-//                            System.out.println("CONNECTION RESPONSE: SUCCESS " + response.body().string());
-
                             //redirect back to navigation
                             Intent intent = new Intent(StatusActivity.this, NavigationActivity.class);
                             startActivity(intent);
                         }
                     });
                 } catch (Exception error){}
-                //resets the counter
-                //st.resetCount();
             }//end onCLICK
         });//end cancelwalk
 
@@ -192,7 +174,7 @@ public class StatusActivity extends AppCompatActivity {
 
     }//end on create
 
-    /**Calls the backend to check what status the walk is currently in and updates the status*/
+    /**Calls backend to check what status the walk is currently in and updates the status*/
     public void statusUpdate(){
         String parameters2 = "function=getWalkByUserPhoneNumber&phone_number="+ userProfile.getPhonenumber();
         try{

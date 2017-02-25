@@ -19,8 +19,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
- * Description: Asks the user to enter their phone number and if there is no walk, direct the user to NavigationActivity.
- * Otherwise, redirect the page to StatusActivity.
+ * Description: Asks the user to enter their phone number and two things can happen
+ *  1) There is an active walk with the phone number. In this case, direct the user to StatusActivity page.
+ *  2) There is no active walk, then direct the user to NavigationActivity where they can request a walk.
+ *
+ *  To check if there is an active walk:
+ *  1. createUser by passing in the phonenumber and firebase generated ID
+ *  2. call getWalkByUserPhoneNumber to check if there is an active walk and the status of the walk.
  * **/
 public class MainActivity extends AppCompatActivity {
     private Button loginButton;
@@ -43,12 +48,11 @@ public class MainActivity extends AppCompatActivity {
         phonenumber = (EditText) findViewById(R.id.user_phone_number);
         loginButton = (Button)findViewById(R.id.login_button);
 
-        //Checks that the phone number entered is valid before login
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 phonenumberString = phonenumber.getText().toString().replace(" ","".replace("-", ""));
-
+                //Checks that the phone number entered is valid before login
                 if (!phoneNumberVerification(phonenumberString)){
                     Context context = getApplicationContext();
                     int duration = Toast.LENGTH_SHORT;

@@ -1,23 +1,23 @@
 If your google maps isn't working/grey
 Need to download/replace debug.keystore && default.keyset into C:\Users\User\.android
 
-follow this tutorial: http://stackoverflow.com/questions/25288977/android-google-maps-api-v2-not-showing-map-when-published
+Follow this tutorial: http://stackoverflow.com/questions/25288977/android-google-maps-api-v2-not-showing-map-when-published
+
 When you generate the apk file, android generates a new SHA1 code
  - need to update this with the google maps API
 
-to get the new SHA1 code:
- cd to the jks directory
- in cmd prompt: 
+To get the new SHA1 code:
+    cd to the jks directory
+    in cmd prompt: 
 	"C:\Program Files\Java\jre7\bin\keytool.exe" -list -v -keystore android.jks
  
 
 keystore pass and keyalias pass should be the same : 7452g8
 
 To change: 
-keytool -storepasswd -new [insert new keystore password] -keystore [insert keystore file name]
-keytool -keypasswd -alias [insert alias] -new [insert new key password] -keystore [insert keystore file name]
-
-replace keytool with "C:\Program Files\Java\jre7\bin\keytool.exe"
+    keytool -storepasswd -new [insert new keystore password] -keystore [insert keystore file name]
+    keytool -keypasswd -alias [insert alias] -new [insert new key password] -keystore [insert keystore file name]
+    replace keytool with "C:\Program Files\Java\jre7\bin\keytool.exe"
 
 
 Currently using API4
@@ -25,3 +25,25 @@ Currently using API4
 There are two versions of google_maps_api.xml
 	1. one for debug
 	2. the other for release
+
+To generate the relase-apk:
+    1. Build -> generate signed api -> upload android.jks -> pass for keystore and key passwoord: 7452g8
+    2. use the release.apk to publish on the android play services console
+
+Permission Checking:
+    1. Android version 6+ requires special type of permission request for location 
+    2. check checkLocationPermission() in NavigationActivity for example. 
+
+
+
+Google Developers Console: => Need to replace this with new API keys
+    You Need:
+    1. Google Places API for Android
+    2. Google Maps Android API
+    3. Google Maps Directions API
+    Credentials:
+    1. API key for google_maps_api.xml (release) and another one for oogle_maps_api.xml (debug)
+    2. Server key for setDirections() in Navigation Activity 
+
+
+

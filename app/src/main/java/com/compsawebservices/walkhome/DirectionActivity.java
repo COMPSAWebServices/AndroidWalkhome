@@ -35,7 +35,9 @@ import java.util.Locale;
 import com.compsawebservices.walkhome.R;
 
 /**
- * Sets up two autocomplete fragments for TO and FROM
+ * Sets up two autocomplete fragments for current location and destination.
+ * When submitted, the current location and destination will be sent to NavigationActivity.
+ *
  * */
 public class DirectionActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
@@ -118,7 +120,7 @@ public class DirectionActivity extends AppCompatActivity implements OnMapReadyCa
                 .enableAutoManage(this, this)
                 .build();
 
-        //autocomplete  from
+        //autocomplete from
         PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_from);
         autocompleteFragmentFrom.setHint(currentAddress);

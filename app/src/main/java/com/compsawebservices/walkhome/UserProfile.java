@@ -8,7 +8,7 @@ package com.compsawebservices.walkhome;
 
 public class UserProfile {
     private static String phonenumber;
-    private static int currentStatus;
+    private static int currentStatus;//walkstatus
 
     public UserProfile(){}
 
